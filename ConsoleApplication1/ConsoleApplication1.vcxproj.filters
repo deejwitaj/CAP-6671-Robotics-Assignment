@@ -52,6 +52,9 @@
     <ClInclude Include="Row.h">
       <Filter>GridWorld</Filter>
     </ClInclude>
+    <ClInclude Include="GridWorldReader.h">
+      <Filter>GridWorld</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -64,6 +67,12 @@
       <Filter>GridWorld</Filter>
     </ClCompile>
     <ClCompile Include="Row.cpp">
+      <Filter>GridWorld</Filter>
+    </ClCompile>
+    <ClCompile Include="GridWorld.cpp">
+      <Filter>GridWorld</Filter>
+    </ClCompile>
+    <ClCompile Include="GridWorldReader.cpp">
       <Filter>GridWorld</Filter>
     </ClCompile>
   </ItemGroup>

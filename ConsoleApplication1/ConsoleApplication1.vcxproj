@@ -83,6 +83,7 @@
     <ClInclude Include="Cell.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="GridWorld.h" />
+    <ClInclude Include="GridWorldReader.h" />
     <ClInclude Include="Row.h" />
     <ClInclude Include="PathPlanner.h" />
     <ClInclude Include="Robot.h" />
@@ -93,6 +94,8 @@
   <ItemGroup>
     <ClCompile Include="Cell.cpp" />
     <ClCompile Include="ConsoleApplication1.cpp" />
+    <ClCompile Include="GridWorld.cpp" />
+    <ClCompile Include="GridWorldReader.cpp" />
     <ClCompile Include="Row.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

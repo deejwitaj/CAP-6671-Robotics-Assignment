@@ -1,3 +1,6 @@
+#ifndef INC_F7CA2A225B094E93926BD88DEA99675E
+#define INC_F7CA2A225B094E93926BD88DEA99675E
+
 class Wall
 {
 public:
@@ -7,3 +10,5 @@ public:
 private:
 	bool m_bHasExit;
 };
+
+#endif

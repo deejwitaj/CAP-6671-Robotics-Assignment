@@ -16,6 +16,16 @@ Cell::Cell(CellSide i_side, Wall i_wall, int i_reward)
 	AddWall(i_side, i_wall);
 }
 
+//Creates a cell with the four passed in walls
+Cell::Cell(Wall i_topWall, Wall i_bottomWall, Wall i_leftWall, Wall i_rightWall, int i_reward)
+{
+	m_reward = i_reward;
+	AddWall(TOP, i_topWall);
+	AddWall(BOTTOM, i_bottomWall);
+	AddWall(LEFT, i_leftWall);
+	AddWall(RIGHT, i_rightWall);
+}
+
 //Creates a cell with all other sides having no exit
 Cell::Cell(std::pair<CellSide, Wall> i_wall, int i_reward)
 {
@@ -64,13 +74,13 @@ void Cell::MakeOpen(bool i_open)
 }
 
 //Returns the requested wall
-Wall Cell::GetWall(CellSide i_side)
+Wall const Cell::GetWall(CellSide i_side)
 {
 	return m_walls[i_side];
 }
 
 //Returns true if cell wall has an exit
-bool Cell::bIsExit(CellSide i_side)
+bool const Cell::bIsExit(CellSide i_side)
 {
 	auto side = m_walls.find(i_side);
 	if (side != m_walls.end())
@@ -79,7 +89,7 @@ bool Cell::bIsExit(CellSide i_side)
 	return false;
 }
 
-bool Cell::bHasExit()
+bool const Cell::bHasExit()
 {
 	for (auto it : m_walls)
 		if (it.second.bHasExit())
@@ -89,7 +99,7 @@ bool Cell::bHasExit()
 }
 
 //Returns true if cell wall has been created for passed in cell side
-bool Cell::bCellWallValid(CellSide i_cellSide)
+bool const Cell::bCellWallValid(CellSide i_cellSide)
 {
 	auto side = m_walls.find(i_cellSide);
 	return (m_walls.find(i_cellSide) != m_walls.end());
