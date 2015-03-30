@@ -29,9 +29,10 @@ Row::Row(Cell const i_cell, int const i_width, int const i_startingColumn)
 Row::Row(std::list<Cell> i_row, int const i_Width, int const i_startingColumn)
 {
 	//The number of beginning default cells will be equal to the first specified column
-	AddRow(i_startingColumn, new Cell(false));
+	Cell i_cell(false);
+	AddRow(i_startingColumn, i_cell);
 	AddRow(i_row);
-	AddRow(i_Width - m_row.size(), new Cell(false));
+	AddRow(i_Width - m_row.size(), i_cell);
 }
 
 //Prints out only the top wall of the cells in the row on a single line
@@ -76,6 +77,20 @@ std::string const Row::PrintBottomWalls()
 
 	return bottomWallString;
 }
+
+//Prints the side and botom walls together. This function is useful for printing a closed cell without a gap beneath the side walls
+std::string const Row::PrintSideAndBottomWalls()
+{
+	if (m_row.empty())
+		return "";
+
+	std::string bottomSideWallsString = m_row.begin()->PrintWall(LEFT);
+
+	for (auto it : m_row)
+		bottomSideWallsString += it.PrintWall(BOTTOM) + it.PrintWall(RIGHT);
+
+	return bottomSideWallsString;
+}
 //Prints out the entir row
 std::string const Row::PrintRow()
 {
@@ -83,7 +98,8 @@ std::string const Row::PrintRow()
 		return "";
 
 	std::string rowString = "";
-	rowString += PrintTopWalls() + "\n" + PrintSideWalls() + "\n" + PrintBottomWalls();
+	rowString += PrintTopWalls() + "\n" + PrintSideAndBottomWalls();
+
 	return rowString;
 }
 

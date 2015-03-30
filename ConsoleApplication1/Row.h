@@ -21,6 +21,7 @@ public:
 	std::string const PrintTopWalls();
 	std::string const PrintSideWalls();
 	std::string const PrintBottomWalls();
+	std::string const PrintSideAndBottomWalls();
 	std::string const PrintRow();
 
 	rowIt cbegin(){ return m_row.cbegin(); }

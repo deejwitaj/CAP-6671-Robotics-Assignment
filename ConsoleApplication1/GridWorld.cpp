@@ -7,8 +7,9 @@ GridWorld::GridWorld(int const i_gridWidth, int const i_gridHeight)
 {
 	m_width = i_gridWidth;
 	m_height = i_gridHeight;
+	Row row(true, i_gridWidth);
 	for (int i = 0; i < i_gridHeight; i++)
-		AddRow(new Row(true, i_gridWidth));
+		AddRow(row);
 }
 
 /*Takes in a vector of Rows and equates it to the member vector. The constructor assumes
@@ -38,11 +39,10 @@ std::string GridWorld::PrintGridWorld()
 	if (m_gridWorldRows.empty())
 		return "";
 
-	std::string gridWorldString = "";
-	gridWorldString += m_gridWorldRows.begin()->PrintTopWalls() + "\n";
+	std::string gridWorldString = m_gridWorldRows[0].PrintTopWalls() + "\n";
 
 	for (auto it : m_gridWorldRows)
-		gridWorldString += it.PrintSideWalls() + "\n" + it.PrintBottomWalls() + "\n";
+		gridWorldString += it.PrintSideAndBottomWalls() + "\n";
 
 	return gridWorldString;
 }
