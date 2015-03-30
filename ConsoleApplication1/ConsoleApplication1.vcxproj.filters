@@ -75,5 +75,8 @@
     <ClCompile Include="GridWorldReader.cpp">
       <Filter>GridWorld</Filter>
     </ClCompile>
+    <ClCompile Include="Wall.cpp">
+      <Filter>GridWorld</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

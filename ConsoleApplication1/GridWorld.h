@@ -18,6 +18,8 @@ public:
 	GridWorld(std::vector<Row> i_gridWorldRows);
 	GridWorld(const char* i_gridWorldFile);
 	
+	std::string PrintGridWorld();
+
 	gridWorldIt cbegin(){ return m_gridWorldRows.cbegin(); }
 	gridWorldIt cend(){ return m_gridWorldRows.cend(); }
 

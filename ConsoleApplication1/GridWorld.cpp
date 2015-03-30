@@ -30,6 +30,23 @@ GridWorld::GridWorld(const char* i_gridWorldFile)
 
 }
 
+//Prints out the grid world. The grid world assumes the file it was created from was formatted correctly.
+//If a conflict between one cell stating it can enter another and the entering cell saying it cannot be entered
+//exists, it will not be reflected in the outputted string
+std::string GridWorld::PrintGridWorld()
+{
+	if (m_gridWorldRows.empty())
+		return "";
+
+	std::string gridWorldString = "";
+	gridWorldString += m_gridWorldRows.begin()->PrintTopWalls() + "\n";
+
+	for (auto it : m_gridWorldRows)
+		gridWorldString += it.PrintSideWalls() + "\n" + it.PrintBottomWalls() + "\n";
+
+	return gridWorldString;
+}
+
 bool GridWorld::AddRow(Row i_row)
 {
 	if (i_row.GetWidth() < m_width || i_row.GetWidth() > m_width)

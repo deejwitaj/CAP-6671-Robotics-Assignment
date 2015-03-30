@@ -41,6 +41,49 @@ Cell::Cell(std::map<CellSide, Wall> i_walls, int i_reward)
 	m_walls = i_walls;
 }
 
+//Returns true if cell wall has an exit
+bool const Cell::bIsExit(CellSide i_side)
+{
+	auto side = m_walls.find(i_side);
+	if (side != m_walls.end())
+		return m_walls[i_side].bHasExit();
+
+	return false;
+}
+
+//Returns true if the cell has an exit
+bool const Cell::bHasExit()
+{
+	for (auto it : m_walls)
+		if (it.second.bHasExit())
+			return true;
+
+	return false;
+}
+
+//Prints out the wall in the passed in side. The default is to print out a space.
+std::string const Cell::PrintWall(CellSide i_side)
+{
+	switch (i_side)
+	{
+	case TOP:
+		return m_walls[TOP].PrintHorizontally();
+
+	case BOTTOM:
+		return m_walls[BOTTOM].PrintHorizontally();
+
+	case LEFT:
+		return m_walls[LEFT].PrintVertically();
+
+	case RIGHT:
+		return m_walls[RIGHT].PrintVertically();
+
+	default:
+		return " ";
+
+	}
+}
+
 //Adds the passed in wall or replaces the existing wall
 void Cell::AddWall(CellSide i_side, Wall i_newWall)
 {
@@ -77,25 +120,6 @@ void Cell::MakeOpen(bool i_open)
 Wall const Cell::GetWall(CellSide i_side)
 {
 	return m_walls[i_side];
-}
-
-//Returns true if cell wall has an exit
-bool const Cell::bIsExit(CellSide i_side)
-{
-	auto side = m_walls.find(i_side);
-	if (side != m_walls.end())
-		return m_walls[i_side].bHasExit();
-
-	return false;
-}
-
-bool const Cell::bHasExit()
-{
-	for (auto it : m_walls)
-		if (it.second.bHasExit())
-			return true;
-
-	return false;
 }
 
 //Returns true if cell wall has been created for passed in cell side

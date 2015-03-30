@@ -5,11 +5,12 @@
 #include "GridWorld.h"
 #include "Row.h"
 
-const char* GRID_WORLD_FILE = "C:/Users/Didier/Documents/Visual Studio 2013/Projects/CAP 6671 Robotics Assignment/ConsoleApplication1/MyGridWorld.txt";
+const char* GRID_WORLD_FILE = "MyGridWorld.txt";
 
 int _tmain(int argc, _TCHAR* argv[])
 {
 	GridWorld *myGridWorld = new GridWorld(GRID_WORLD_FILE);
+	printf(myGridWorld->PrintGridWorld().c_str());
 	return 0;
 }
 

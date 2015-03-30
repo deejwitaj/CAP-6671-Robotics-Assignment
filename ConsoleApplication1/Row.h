@@ -18,6 +18,11 @@ public:
 
 	int const GetWidth(){ return m_row.size(); }
 
+	std::string const PrintTopWalls();
+	std::string const PrintSideWalls();
+	std::string const PrintBottomWalls();
+	std::string const PrintRow();
+
 	rowIt cbegin(){ return m_row.cbegin(); }
 	rowIt cend(){ return m_row.cend(); }
 
@@ -26,7 +31,7 @@ private:
 	std::list<Cell> m_row;
 
 	void AddCell(Cell i_cell);
-	void AddRow(int const i_numOfCells);
+	void AddRow(int const i_numOfCells, Cell i_cell);
 	void AddRow(std::list<Cell> i_row);
 };
 

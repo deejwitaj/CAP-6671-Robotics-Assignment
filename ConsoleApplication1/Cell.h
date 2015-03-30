@@ -6,6 +6,7 @@
 #include "Common.h"
 #include "Wall.h"
 
+/*Makes up the entire grid. Each cell is made up of four walls with each wall potentially having an exit.*/
 class Cell
 {
 public:
@@ -24,6 +25,8 @@ public:
 
 	bool const bIsExit(CellSide i_cellSide);
 	bool const bHasExit();
+
+	std::string const PrintWall(CellSide i_side);
 
 	wallIt cbegin(){ return m_walls.cbegin(); }
 	wallIt cend(){ return m_walls.cend(); }
