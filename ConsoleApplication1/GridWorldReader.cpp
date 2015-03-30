@@ -1,9 +1,43 @@
 #include "stdafx.h"
+
+#include <iostream>
+#include <fstream>
+
 #include "GridWorldReader.h"
 
-GridWorldReader::GridWorldReader(const char* i_gridWorldFile)
+//Creates a grid world and passes the vector representing the rows in a grid world back into vector
+bool GridWorldReader::CreateGridWorld(const char* i_gridWorldFile, std::vector<Row> &io_gridWorldRows)
 {
+	using namespace std;
 
+	ifstream gridWorldFile(i_gridWorldFile);
+	if (gridWorldFile.is_open())
+	{
+		string nextLine;
+		if (getline(gridWorldFile, nextLine))
+		{
+			int gridWidth, gridHeight;
+			auto it = nextLine.cbegin();
+
+			if (ReadGridStats(it, gridWidth, gridHeight))
+			{
+				int numOfRowsToRead = gridHeight;
+				Row newRow;
+
+				while (getline(gridWorldFile, nextLine) && numOfRowsToRead > 0)
+				{
+					--numOfRowsToRead;
+					if (ReadRow(nextLine, newRow, gridWidth))
+						io_gridWorldRows.push_back(newRow);
+				}
+				return true;
+			}
+			else
+				return false;
+		}
+	}
+
+	return false;
 }
 
 //Moves past the intial opening parenthesis of a group in the line
@@ -56,6 +90,18 @@ bool GridWorldReader::ReadCellStats(std::string::const_iterator &i_line, Cell &i
 		io_cell = Cell(topWall, bottomWall, leftWall, rightWall);
 		return true;
 	}
+
+	return false;
+}
+
+//Reads in the information on the entire grid
+/*The expected format is (m,n)
+  'm' represents the grid width
+	'n' represents the grid height*/
+bool GridWorldReader::ReadGridStats(std::string::const_iterator &i_line, int &io_gridWidth, int &io_gridHeight)
+{
+	if (ReadAndConvertStringToNumber(i_line, io_gridWidth) && ReadAndConvertStringToNumber(i_line, io_gridHeight))
+		return true;
 
 	return false;
 }

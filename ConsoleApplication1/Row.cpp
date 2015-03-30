@@ -35,7 +35,7 @@ Row::Row(std::list<Cell> i_row, int const i_Width, int const i_startingColumn)
 }
 
 //Adds a closed cell to the end of the row
-void Row::AddCell(Cell const i_cell)
+void Row::AddCell(Cell i_cell)
 {
 	m_row.emplace_back(i_cell);
 }

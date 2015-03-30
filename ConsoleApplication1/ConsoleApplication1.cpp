@@ -2,15 +2,14 @@
 //
 
 #include "stdafx.h"
-#include "GridWorldReader.h"
+#include "GridWorld.h"
 #include "Row.h"
+
+const char* GRID_WORLD_FILE = "C:/Users/Didier/Documents/Visual Studio 2013/Projects/CAP 6671 Robotics Assignment/ConsoleApplication1/MyGridWorld.txt";
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	GridWorldReader testReader;
-	Row testRow;
-
-	testReader.ReadRow("(3,5)(1,1,0,0)(1,1,0,0)(1,1,0,0)", testRow, 8);
+	GridWorld *myGridWorld = new GridWorld(GRID_WORLD_FILE);
 	return 0;
 }
 

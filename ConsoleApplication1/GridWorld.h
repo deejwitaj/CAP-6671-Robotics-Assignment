@@ -8,12 +8,13 @@
 #include "Row.h"
 #include "Robot.h"
 
+/*The grid world is a vecotr of rows whose ordering represents a top to bottom placement*/
 class GridWorld
 {
 public:
 	typedef std::vector<Row>::const_iterator gridWorldIt;
 
-	GridWorld();
+	GridWorld(int const i_gridWidth = 8, int const i_gridHeight = 8);
 	GridWorld(GridWorld &i_gridWorld);
 	GridWorld(std::vector<Row> i_gridWorldRows);
 	GridWorld(const char* i_gridWorldFile);
@@ -25,6 +26,8 @@ protected:
 private:
 	std::vector<Row> m_gridWorldRows;
 	int m_width, m_height;
+
+	bool AddRow(Row i_row);
 };
 
 #endif

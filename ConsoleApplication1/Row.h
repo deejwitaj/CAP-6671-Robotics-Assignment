@@ -25,7 +25,7 @@ protected:
 private:
 	std::list<Cell> m_row;
 
-	void AddCell(Cell const i_cell);
+	void AddCell(Cell i_cell);
 	void AddRow(int const i_numOfCells);
 	void AddRow(std::list<Cell> i_row);
 };
