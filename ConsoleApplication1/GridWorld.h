@@ -15,7 +15,6 @@ public:
 	typedef std::vector<Row>::const_iterator gridWorldIt;
 
 	GridWorld(int const i_gridWidth = 8, int const i_gridHeight = 8);
-	GridWorld(GridWorld &i_gridWorld);
 	GridWorld(std::vector<Row> i_gridWorldRows);
 	GridWorld(const char* i_gridWorldFile);
 	

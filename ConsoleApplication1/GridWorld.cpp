@@ -11,11 +11,6 @@ GridWorld::GridWorld(int const i_gridWidth, int const i_gridHeight)
 		AddRow(new Row(true, i_gridWidth));
 }
 
-GridWorld::GridWorld(GridWorld &i_gridWorld)
-{
-
-}
-
 /*Takes in a vector of Rows and equates it to the member vector. The constructor assumes
   that the rows are all equal length, and so uses the first row as its reference for the 
 	needed width. The height is assumed to be the number of rows in the vector*/
