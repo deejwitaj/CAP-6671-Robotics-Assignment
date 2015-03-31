@@ -111,7 +111,7 @@ bool GridWorldReader::ReadGridStats(std::string::const_iterator &i_line, int &io
 bool GridWorldReader::ReadRow(std::string const &i_gridWorldRow, Row &io_row, int const i_gridWidth)
 {
 	int rowWidth, startingColumn;
-	std::list<Cell> i_readCells;
+	std::vector<Cell> i_readCells;
 	auto it = i_gridWorldRow.cbegin();
 
 	//Read in information about 

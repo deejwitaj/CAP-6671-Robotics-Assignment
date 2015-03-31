@@ -26,13 +26,23 @@ Row::Row(Cell const i_cell, int const i_width, int const i_startingColumn)
 /*If no starting column is given, the row will automatically start at the 0th position
   i_Width is the width of the entire desired row
 	i_startingColumn is the column i_row begins*/
-Row::Row(std::list<Cell> i_row, int const i_Width, int const i_startingColumn)
+Row::Row(std::vector<Cell> i_row, int const i_Width, int const i_startingColumn)
 {
 	//The number of beginning default cells will be equal to the first specified column
 	Cell i_cell(false);
 	AddRow(i_startingColumn, i_cell);
 	AddRow(i_row);
 	AddRow(i_Width - m_row.size(), i_cell);
+}
+
+//Returns a copy of the requested cell in the passed in position
+bool Row::GetCell(int const i_cellPosition, Cell &io_cell) const
+{
+	if ((i_cellPosition < 0) || (i_cellPosition >= m_row.size()))
+		return false;
+
+	io_cell = m_row[i_cellPosition];
+	return true;;
 }
 
 //Prints out only the top wall of the cells in the row on a single line
@@ -119,7 +129,7 @@ void Row::AddRow(int const i_numOfCells, Cell i_cell)
 		AddCell(i_cell);
 }
 
-void Row::AddRow(std::list<Cell> i_row)
+void Row::AddRow(std::vector<Cell> i_row)
 {
 	for (auto it : i_row)
 		AddCell(it);

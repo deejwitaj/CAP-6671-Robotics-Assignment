@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "Row.h"
-#include "Robot.h"
+#include "Common.h"
 
 /*The grid world is a vecotr of rows whose ordering represents a top to bottom placement*/
 class GridWorld
@@ -17,8 +17,24 @@ public:
 	GridWorld(int const i_gridWidth = 8, int const i_gridHeight = 8);
 	GridWorld(std::vector<Row> i_gridWorldRows);
 	GridWorld(const char* i_gridWorldFile);
+
+	bool GetCell(Position i_cellPosition, Cell &io_cell) const;
+	bool GetRow(int rowPosition, Row &io_row) const;
+	Position GetStartingCellPosition() const { return m_startingCell; }
+	Position GetGoalCellLocation() const { return m_goalCell; }
+
+	bool bIsPositionValid(const Position i_position) const;
+	bool bIsMoveValid(Position i_from, Position i_to) const;
 	
-	std::string PrintGridWorld();
+	std::string const PrintGridWorld();
+
+	bool Enter();
+	void Leave(){ m_bOccupied = false; }
+	bool Move(Position i_from, Position i_to);
+	bool MoveDown();
+	bool MoveLeft();
+	bool MoveRight();
+	bool MoveUp();
 
 	gridWorldIt cbegin(){ return m_gridWorldRows.cbegin(); }
 	gridWorldIt cend(){ return m_gridWorldRows.cend(); }
@@ -27,6 +43,10 @@ protected:
 private:
 	std::vector<Row> m_gridWorldRows;
 	int m_width, m_height;
+	Position m_startingCell;
+	Position m_goalCell;
+	Position m_occupant;
+	bool m_bOccupied;
 
 	bool AddRow(Row i_row);
 };
