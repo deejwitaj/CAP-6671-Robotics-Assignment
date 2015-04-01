@@ -94,37 +94,10 @@ bool GridWorld::bIsMoveValid(Position const i_from, Position const i_to) const
 	{
 		Cell toCell, fromCell;
 
-		//Ensure the requested cells are valid
+		//Ensure the requested cells are valid and both cells are open
 		if (GetCell(i_from, fromCell) && GetCell(i_to, toCell))
-		{
-			//Ensure the cells have exits and, as a consequence, entrances
-			if (fromCell.bHasExit() && toCell.bHasExit())
-			{
-				//If xDistance is the one that is non zero, then the one cell is to the left or right of the other
-				if (xDistance != 0)
-				{
-					//Moving from fromCell's right exit to toCell's left exit, if they are valid
-					if ((xDistance < 0) && (fromCell.bIsExit(RIGHT)) && (toCell.bIsExit(LEFT)))
-						return true;
-
-					//Moving from fromCell's left exit to toCell's right exit, if they are valid
-					if ((xDistance > 0) && (fromCell.bIsExit(LEFT)) && (toCell.bIsExit(RIGHT)))
-						return true;
-				}
-
-				//yDistance is the one that is non zero, so one cell is to the top or bottom of the other
-				else
-				{
-					//Moving from fromCell's bottom exit to toCell's top exit, if they are valid
-					if ((yDistance < 0) && (fromCell.bIsExit(BOTTOM)) && (toCell.bIsExit(TOP)))
-						return true;
-
-					//Moving from fromCell's top exit to toCell's bottom exit, if they are valid
-					if ((yDistance > 0) && (fromCell.bIsExit(TOP)) && (toCell.bIsExit(BOTTOM)))
-						return true;
-				}
-			}
-		}
+			if (fromCell.bIsOpen() && toCell.bIsOpen())
+				return true;
 	}
 
 	return false;
@@ -138,10 +111,10 @@ std::string const GridWorld::PrintGridWorld()
 	if (m_gridWorldRows.empty())
 		return "";
 
-	std::string gridWorldString = m_gridWorldRows[0].PrintTopWalls() + "\n";
+	std::string gridWorldString = "";
 
 	for (auto it : m_gridWorldRows)
-		gridWorldString += it.PrintSideAndBottomWalls() + "\n";
+		gridWorldString += it.PrintRow() + "\n";
 
 	return gridWorldString;
 }

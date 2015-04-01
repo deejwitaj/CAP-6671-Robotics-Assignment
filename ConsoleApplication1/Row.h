@@ -19,14 +19,7 @@ public:
 	int GetWidth() const{ return m_row.size(); }
 	bool GetCell(int const i_cellPosition, Cell &io_cell) const;
 
-	std::string const PrintTopWalls();
-	std::string const PrintSideWalls();
-	std::string const PrintBottomWalls();
-	std::string const PrintSideAndBottomWalls();
 	std::string const PrintRow();
-
-	rowIt cbegin() const{ return m_row.cbegin(); }
-	rowIt cend() const{ return m_row.cend(); }
 
 protected:
 private:

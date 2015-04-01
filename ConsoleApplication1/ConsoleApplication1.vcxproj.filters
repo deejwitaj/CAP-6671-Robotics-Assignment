@@ -46,9 +46,6 @@
     <ClInclude Include="GridWorld.h">
       <Filter>GridWorld</Filter>
     </ClInclude>
-    <ClInclude Include="Wall.h">
-      <Filter>GridWorld</Filter>
-    </ClInclude>
     <ClInclude Include="Row.h">
       <Filter>GridWorld</Filter>
     </ClInclude>
@@ -73,9 +70,6 @@
       <Filter>GridWorld</Filter>
     </ClCompile>
     <ClCompile Include="GridWorldReader.cpp">
-      <Filter>GridWorld</Filter>
-    </ClCompile>
-    <ClCompile Include="Wall.cpp">
       <Filter>GridWorld</Filter>
     </ClCompile>
   </ItemGroup>

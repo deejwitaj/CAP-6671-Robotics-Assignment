@@ -32,6 +32,8 @@ bool GridWorldReader::CreateGridWorld(const char* i_gridWorldFile, std::vector<R
 				}
 				return true;
 			}
+
+			//There was an error with reading in stats on grid world width and height
 			else
 				return false;
 		}
@@ -73,25 +75,21 @@ bool GridWorldReader::ReadAndConvertStringToNumber(std::string::const_iterator &
 }
 
 //Reads in the information of a single cell
-/*The expected format is (a,b,c,d)
-  "a,b,c,d" can either be 1 or 0. Any value over 0 will be interpreted as a 1. Below 0 will be
-	interpreted as 0.
-	'a' represents the top wall
-	'b' represents the bottom wall
-	'c' represents the left wall
-	'd' represents the right wall*/
-bool GridWorldReader::ReadCellStats(std::string::const_iterator &i_line, Cell &io_cell)
+bool GridWorldReader::ReadCell(std::string::const_iterator &i_line, Cell &io_cell)
 {
-	std::string wallString = "";
-	Wall topWall, bottomWall, leftWall, rightWall;
+	std::string cellString = "";
+	bool bIsOpen;
 
-	if (ReadWall(i_line, topWall) && ReadWall(i_line, bottomWall) && ReadWall(i_line, leftWall) && ReadWall(i_line, rightWall))
-	{
-		io_cell = Cell(topWall, bottomWall, leftWall, rightWall);
-		return true;
-	}
+	if (*i_line == 'X')
+		bIsOpen = false;
+	else if (*i_line == 'O')
+		bIsOpen = true;
+	else
+		return false;
 
-	return false;
+	Cell newCell(bIsOpen);
+	io_cell = newCell;
+	return true;
 }
 
 //Reads in the information on the entire grid
@@ -107,62 +105,39 @@ bool GridWorldReader::ReadGridStats(std::string::const_iterator &i_line, int &io
 }
 
 //Converts an entire passed in line to a new row for a grid
-/*The expected format is (x,y)(a,b,c,d) with x number of (a,b,c,d)*/
 bool GridWorldReader::ReadRow(std::string const &i_gridWorldRow, Row &io_row, int const i_gridWidth)
 {
-	int rowWidth, startingColumn;
 	std::vector<Cell> i_readCells;
 	auto it = i_gridWorldRow.cbegin();
 
-	//Read in information about 
-	if (ReadRowStats(it, rowWidth, startingColumn))
+	//No cells were specified in file, so an empty row is created
+	if (it == i_gridWorldRow.end())
 	{
-		//The row is bigger than the stated width of the grid, so there is an error with the file
-		if (rowWidth > i_gridWidth)
-			return false;
-
-		//No cells were specified, so an empty row is created
-		if (++it == i_gridWorldRow.end())
-		{
-			io_row = Row(true, i_gridWidth);
-			return true;
-		}
-
-		Cell cell;
-		for (int i = 0; i < rowWidth; i++)
-		{
-			//If if statement is true, then there were not enough cells to match the stated partial row width
-			if (it == i_gridWorldRow.end())
-				return false;
-
-			if (ReadCellStats(it, cell))
-			{
-				i_readCells.emplace_back(cell);
-				++it;
-			}
-			else
-				return false;
-		}
-
-		io_row = Row(i_readCells, i_gridWidth, startingColumn);
+		io_row = Row(true, i_gridWidth);
 		return true;
 	}
 
-	return false;
-}
+	Cell cell;
+	for (int i = 0; i < i_gridWidth; i++)
+	{
+		//If if statement is true, then there were not enough cells to match the stated partial row width
+		if (it == i_gridWorldRow.end())
+			return false;
 
-//Reads in the stats of the current line representing the row
-/*The expected format is (x,y)
-  x = the width of the given row
-  y = the starting column of the given row*/
-bool GridWorldReader::ReadRowStats(std::string::const_iterator &i_line, int &io_width, int &io_startingColumn)
-{
-	std::string numberString = "";
+		//Read in cell
+		if (ReadCell(it, cell))
+		{
+			i_readCells.emplace_back(cell);
+			++it;
+		}
 
-	if(ReadAndConvertStringToNumber(i_line, io_width))
-		return ReadAndConvertStringToNumber(i_line, io_startingColumn);
+		//Currently read in cell was not valid
+		else
+			return false;
+	}
 
-	return false;
+	io_row = Row(i_readCells, i_gridWidth);
+	return true;
 }
 
 //Passes values pointed to by iterator into a string until comma  or closing parentheses is reached.
@@ -182,20 +157,6 @@ bool GridWorldReader::ReadNumberToString(std::string::const_iterator &i_line, st
 	}
 
 	return true;
-}
-
-
-//Reads in a section of a cell group to create a wall
-bool GridWorldReader::ReadWall(std::string::const_iterator &i_line, Wall &io_wall)
-{
-	int exitPresent = 0;
-	if (ReadAndConvertStringToNumber(i_line, exitPresent))
-	{
-		io_wall = Wall((exitPresent > 0));
-		return true;
-	}
-
-	return false;
 }
 
 //Determine if the string is a number

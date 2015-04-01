@@ -2,45 +2,39 @@
 #define INC_93E1D27140414CBCBDC94F51395C287E
 
 /*Represents a single cell in a grid world.*/
-#include <map>
+#include <string>
 #include "Common.h"
-#include "Wall.h"
 
 /*Makes up the entire grid. Each cell is made up of four walls with each wall potentially having an exit.*/
 class Cell
 {
 public:
-	typedef std::map<CellSide, Wall>::const_iterator wallIt;
+	Cell(bool i_bIsOpen = true, bool i_bIsOccupied = false, int i_reward = 1);
 
-	Cell(bool i_bIsOpen = true, int i_reward = 1);
-	Cell(CellSide i_side, Wall i_wall, int i_reward = 1);
-	Cell(Wall i_topWall, Wall i_bottomWall, Wall i_leftWall, Wall i_rightWall, int i_reward = 1);
-	Cell(std::pair<CellSide, Wall> i_wall, int i_reward = 1);
-	Cell(std::map<CellSide, Wall> i_walls, int i_reward = 1);
-
-	Wall const GetWall(CellSide i_side);
-	int const GetReward(){ return m_reward; }
+	int GetReward() const{ return m_reward; }
 
 	void SetReward(int const i_reward){ m_reward = i_reward; }
 
-	bool const bIsExit(CellSide i_cellSide);
-	bool const bHasExit();
+	void Accept(){ m_bIsAccepted = true; }
+	void Consider(){ m_bIsBeingConsidered = true; }
+	void Decline(){ m_bIsAccepted = false; }
+	bool Leave();
+	bool Occupy();
+	void Unconsider(){ m_bIsBeingConsidered = false; }
 
-	std::string const PrintWall(CellSide i_side);
+	bool bIsOpen() const { return m_bIsOpen; }
+	bool bIsOccupied() const { return m_bIsOccupied; }
+	bool bIsAccepted() const { return m_bIsAccepted; }
+	bool bIsConsidered() const { return m_bIsBeingConsidered; }
 
-	wallIt cbegin(){ return m_walls.cbegin(); }
-	wallIt cend(){ return m_walls.cend(); }
+	std::string PrintCell() const;
 
 private:
-	std::map<CellSide, Wall> m_walls;
 	int m_reward;
-
-	void AddWall(CellSide i_side, Wall i_newWall);
-	void AddWall(std::pair<CellSide, Wall> i_wall);
-	void RemoveWall(CellSide i_side);
-	void MakeOpen(bool i_open);
-
-	bool const bCellWallValid(CellSide i_cellSide);
+	bool m_bIsOpen; //If true, can be entered. If false, is a wall
+	bool m_bIsOccupied; //If true, an occupant is inhabiting the cell
+	bool m_bIsBeingConsidered; //If true, cell is part of a considered path in A* planning
+	bool m_bIsAccepted; //If true, cell is accepted as part of a final A* path
 };
 
 #endif

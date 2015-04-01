@@ -6,7 +6,6 @@
 
 #include "Row.h"
 #include "Cell.h"
-#include "Wall.h"
 
 class GridWorldReader
 {
@@ -18,12 +17,10 @@ private:
 	static bool BeginRead(std::string::const_iterator &i_line);
 	static bool ConvertStringToNumber(const std::string i_string, int &io_number);
 	static bool ReadAndConvertStringToNumber(std::string::const_iterator &i_line, int &io_number);
-	static bool ReadCellStats(std::string::const_iterator &i_line, Cell &io_cell);
+	static bool ReadCell(std::string::const_iterator &i_line, Cell &io_cell);
 	static bool ReadGridStats(std::string::const_iterator &i_line, int &io_gridWidth, int &io_gridHeight);
 	static bool ReadRow(std::string const &i_gridWorldRow, Row &io_row, int const i_gridWidth);
-	static bool ReadRowStats(std::string::const_iterator &i_line, int &io_width, int &io_startingColumn);
 	static bool ReadNumberToString(std::string::const_iterator &i_line, std::string &io_string);
-	static bool ReadWall(std::string::const_iterator &i_line, Wall &io_wall);
 
 	static bool bIsNumber(std::string const i_string);
 };
