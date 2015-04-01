@@ -45,6 +45,24 @@ bool Row::GetCell(int const i_cellPosition, Cell &io_cell) const
 	return true;;
 }
 
+//Leaves the cell in the selected position
+bool Row::LeaveCell(int const i_cellPosition)
+{
+	if ((i_cellPosition >= 0) && (i_cellPosition < GetWidth()))
+		return m_row[i_cellPosition].Leave();
+
+	return false;
+}
+
+//Occupies the cell in the selected position
+bool Row::OccupyCell(int const i_cellPosition)
+{
+	if ((i_cellPosition >= 0) && (i_cellPosition < GetWidth()))
+		return m_row[i_cellPosition].Occupy();
+
+	return false;
+}
+
 //Prints out the entir row
 std::string const Row::PrintRow()
 {

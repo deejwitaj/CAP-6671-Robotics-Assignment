@@ -1,3 +1,5 @@
+#include <conio.h>
+
 #include "stdafx.h"
 #include "GridWorld.h"
 #include "GridWorldReader.h"
@@ -29,7 +31,7 @@ GridWorld::GridWorld(const char* i_gridWorldFile)
 	if (GridWorldReader::CreateGridWorld(i_gridWorldFile, potentialGridWorldRows))
 		m_gridWorldRows = potentialGridWorldRows;
 	m_width = m_gridWorldRows[0].GetWidth();
-	m_height = m_gridWorldRows.size() - 1;
+	m_height = m_gridWorldRows.size();
 }
 
 //Returns the cell in the passed in position
@@ -108,6 +110,8 @@ bool GridWorld::bIsMoveValid(Position const i_from, Position const i_to) const
 //exists, it will not be reflected in the outputted string
 std::string const GridWorld::PrintGridWorld()
 {
+	printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+
 	if (m_gridWorldRows.empty())
 		return "";
 
@@ -116,18 +120,51 @@ std::string const GridWorld::PrintGridWorld()
 	for (auto it : m_gridWorldRows)
 		gridWorldString += it.PrintRow() + "\n";
 
+	printf(gridWorldString.c_str());
 	return gridWorldString;
 }
 
-//Returns the entrance cell's position in the grid
+//Enters the robot in the first available grid. The order of checked cells goes from left to right, top to bottom
 bool GridWorld::Enter()
 {
 	if (m_bOccupied)
 		return false;
 
-	m_occupant = GetStartingCellPosition();
-	m_bOccupied = true;
-	return true;
+	Position position;
+	bool bCelIsAvailable = false;
+	for (int checkedRow = 0; checkedRow < m_height; checkedRow++)
+	{
+		for (int checkedCell = 0; checkedCell < m_width; checkedCell++)
+		{
+			if (bIsPositionValid(position) && OccupyCell(position))
+			{
+				m_bOccupied = true;
+				PrintGridWorld();
+				return true;
+			}
+			position.SetXPosition(checkedCell);
+		}
+		position.SetXPosition(0);
+		position.SetYPosition(checkedRow);
+	}
+
+	return false;
+}
+
+//Enters the robot into the requested position if it is available
+bool GridWorld::Enter(Position i_position)
+{
+	if (m_bOccupied)
+		return false;
+
+	if (bIsPositionValid(i_position) && OccupyCell(i_position))
+	{
+		m_bOccupied = true;
+		PrintGridWorld();
+		return true;
+	}
+
+	return false;
 }
 
 //Move from i_from to i_to
@@ -136,9 +173,9 @@ bool GridWorld::Move(Position i_from, Position i_to)
 	if (m_bOccupied)
 	{
 		//If move is valid, we update the occupant position and return that the move was successful
-		if (bIsMoveValid(i_from, i_to))
+		if (bIsMoveValid(i_from, i_to) && LeaveCell(i_from) && OccupyCell(i_to))
 		{
-			m_occupant = i_to;
+			PrintGridWorld();
 			return true;
 		}
 	}
@@ -185,4 +222,25 @@ bool GridWorld::AddRow(Row i_row)
 
 	m_gridWorldRows.push_back(i_row);
 	return true;
+}
+
+//Leaves the cell in the passed in position
+bool GridWorld::LeaveCell(Position const i_position)
+{
+	if (bIsPositionValid(i_position))
+		return m_gridWorldRows[i_position.GetYPosition()].LeaveCell(i_position.GetXPosition());
+
+	return false;
+}
+//Occupies the cell in the passed in position
+bool GridWorld::OccupyCell(Position const i_position)
+{
+	if (bIsPositionValid(i_position))
+		if (m_gridWorldRows[i_position.GetYPosition()].OccupyCell(i_position.GetXPosition()))
+		{
+			m_occupant = i_position;
+			return true;
+		}
+
+	return false;
 }

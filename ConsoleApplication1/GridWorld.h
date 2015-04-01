@@ -29,6 +29,7 @@ public:
 	std::string const PrintGridWorld();
 
 	bool Enter();
+	bool Enter(Position i_position);
 	void Leave(){ m_bOccupied = false; }
 	bool Move(Position i_from, Position i_to);
 	bool MoveDown();
@@ -49,6 +50,8 @@ private:
 	bool m_bOccupied;
 
 	bool AddRow(Row i_row);
+	bool LeaveCell(Position const i_position);
+	bool OccupyCell(Position const i_position);
 };
 
 #endif

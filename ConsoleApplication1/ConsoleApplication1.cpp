@@ -10,8 +10,15 @@ const char* GRID_WORLD_FILE = "MyNewGridWorld.txt";
 int _tmain(int argc, _TCHAR* argv[])
 {
 	GridWorld *myGridWorld = new GridWorld(GRID_WORLD_FILE);
-	std::string gridWorldString = myGridWorld->PrintGridWorld();
-	printf(gridWorldString.c_str());
+	myGridWorld->Enter();
+	myGridWorld->MoveRight();
+	myGridWorld->MoveDown();
+	myGridWorld->MoveDown();
+	myGridWorld->MoveDown();
+	myGridWorld->MoveRight();
+	myGridWorld->MoveRight();
+	myGridWorld->MoveRight();
+
 	return 0;
 }
 

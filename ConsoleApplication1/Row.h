@@ -19,6 +19,8 @@ public:
 	int GetWidth() const{ return m_row.size(); }
 	bool GetCell(int const i_cellPosition, Cell &io_cell) const;
 
+	bool LeaveCell(int const i_cellPosition);
+	bool OccupyCell(int const i_cellPosition);
 	std::string const PrintRow();
 
 protected:
