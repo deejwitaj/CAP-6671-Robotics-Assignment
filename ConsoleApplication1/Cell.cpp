@@ -2,10 +2,10 @@
 #include "Cell.h"
 
 //If no walls are given, then the cell defaults to a barrier
-Cell::Cell(bool i_bIsOpen, bool i_bIsOccupied, int i_reward) :
+Cell::Cell(bool i_bIsOpen, bool i_bIsOccupied, bool i_bIsGoal) :
 		m_bIsOpen(i_bIsOpen)
 	, m_bIsOccupied(i_bIsOccupied)
-	, m_reward(i_reward)
+	, m_bIsGoal(i_bIsGoal)
 	, m_bIsAccepted(false)
 	, m_bIsBeingConsidered(false)
 {
@@ -49,6 +49,9 @@ std::string Cell::PrintCell() const
 
 	if (m_bIsBeingConsidered)
 		return "?";
+
+	if (m_bIsGoal)
+		return "G";
 
 	return "O";
 }

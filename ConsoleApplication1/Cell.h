@@ -9,11 +9,7 @@
 class Cell
 {
 public:
-	Cell(bool i_bIsOpen = true, bool i_bIsOccupied = false, int i_reward = 1);
-
-	int GetReward() const{ return m_reward; }
-
-	void SetReward(int const i_reward){ m_reward = i_reward; }
+	Cell(bool i_bIsOpen = true, bool i_bIsOccupied = false, bool i_bIsGoal = false);
 
 	void Accept(){ m_bIsAccepted = true; }
 	void Consider(){ m_bIsBeingConsidered = true; }
@@ -26,6 +22,7 @@ public:
 	bool bIsOccupied() const { return m_bIsOccupied; }
 	bool bIsAccepted() const { return m_bIsAccepted; }
 	bool bIsConsidered() const { return m_bIsBeingConsidered; }
+	bool bIsGoal() const { return m_bIsGoal; }
 
 	std::string PrintCell() const;
 
@@ -35,6 +32,7 @@ private:
 	bool m_bIsOccupied; //If true, an occupant is inhabiting the cell
 	bool m_bIsBeingConsidered; //If true, cell is part of a considered path in A* planning
 	bool m_bIsAccepted; //If true, cell is accepted as part of a final A* path
+	bool m_bIsGoal; //If true, cell is goal cell in grid world
 };
 
 #endif

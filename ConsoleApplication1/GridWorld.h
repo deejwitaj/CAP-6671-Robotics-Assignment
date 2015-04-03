@@ -7,6 +7,7 @@
 
 #include "Row.h"
 #include "Common.h"
+#include "RewardsMap.h"
 
 /*The grid world is a vecotr of rows whose ordering represents a top to bottom placement*/
 class GridWorld
@@ -20,9 +21,12 @@ public:
 
 	bool GetCell(Position i_cellPosition, Cell &io_cell) const;
 	bool GetRow(int rowPosition, Row &io_row) const;
+	int GetHeight() const{ return m_height; }
+	int GetWidth() const{ return m_width; }
 	Position GetStartingCellPosition() const { return m_startingCell; }
 	Position GetGoalCellLocation() const { return m_goalCell; }
 
+	bool bIsGoal(Position const i_position) const;
 	bool bIsPositionValid(const Position i_position) const;
 	bool bIsMoveValid(Position i_from, Position i_to) const;
 	
@@ -37,8 +41,8 @@ public:
 	bool MoveRight();
 	bool MoveUp();
 
-	gridWorldIt cbegin(){ return m_gridWorldRows.cbegin(); }
-	gridWorldIt cend(){ return m_gridWorldRows.cend(); }
+	gridWorldIt begin(){ return m_gridWorldRows.cbegin(); }
+	gridWorldIt end(){ return m_gridWorldRows.cend(); }
 
 protected:
 private:
@@ -48,8 +52,11 @@ private:
 	Position m_goalCell;
 	Position m_occupant;
 	bool m_bOccupied;
+	RewardsMap m_rewardMap;
 
 	bool AddRow(Row i_row);
+	int DetermineMoveReward(Position const i_from, Position const i_to);
+	void FillRewardsMap();
 	bool LeaveCell(Position const i_position);
 	bool OccupyCell(Position const i_position);
 };

@@ -78,16 +78,21 @@ bool GridWorldReader::ReadAndConvertStringToNumber(std::string::const_iterator &
 bool GridWorldReader::ReadCell(std::string::const_iterator &i_line, Cell &io_cell)
 {
 	std::string cellString = "";
-	bool bIsOpen;
+	bool bIsOpen = true;
+	bool bIsGoal = false;
 
-	if (*i_line == 'X')
+	if (*i_line == 'G')
+	{
+		bIsGoal = true;
+	}
+	else if (*i_line == 'X')
 		bIsOpen = false;
 	else if (*i_line == 'O')
 		bIsOpen = true;
 	else
 		return false;
 
-	Cell newCell(bIsOpen);
+	Cell newCell(bIsOpen, false, bIsGoal);
 	io_cell = newCell;
 	return true;
 }

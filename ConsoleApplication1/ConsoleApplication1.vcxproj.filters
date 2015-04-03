@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="Header Files">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
@@ -21,6 +17,10 @@
     </Filter>
     <Filter Include="GridWorld">
       <UniqueIdentifier>{0f4a2d8d-67eb-416b-a610-048dc84eb545}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -52,13 +52,19 @@
     <ClInclude Include="GridWorldReader.h">
       <Filter>GridWorld</Filter>
     </ClInclude>
+    <ClInclude Include="Interface.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="QMap.h">
+      <Filter>Planner</Filter>
+    </ClInclude>
+    <ClInclude Include="RewardsMap.h">
+      <Filter>GridWorld</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ConsoleApplication1.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Interface</Filter>
     </ClCompile>
     <ClCompile Include="Cell.cpp">
       <Filter>GridWorld</Filter>
@@ -71,6 +77,12 @@
     </ClCompile>
     <ClCompile Include="GridWorldReader.cpp">
       <Filter>GridWorld</Filter>
+    </ClCompile>
+    <ClCompile Include="Interface.cpp">
+      <Filter>Interface</Filter>
+    </ClCompile>
+    <ClCompile Include="RewardsMap.cpp">
+      <Filter>Planner</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,5 +1,3 @@
-#include <conio.h>
-
 #include "stdafx.h"
 #include "GridWorld.h"
 #include "GridWorldReader.h"
@@ -12,6 +10,7 @@ GridWorld::GridWorld(int const i_gridWidth, int const i_gridHeight)
 	Row row(true, i_gridWidth);
 	for (int i = 0; i < i_gridHeight; i++)
 		AddRow(row);
+	FillRewardsMap();
 }
 
 /*Takes in a vector of Rows and equates it to the member vector. The constructor assumes
@@ -23,6 +22,7 @@ GridWorld::GridWorld(std::vector<Row> i_gridWorldRows)
 	m_height = i_gridWorldRows.size();
 	
 	m_gridWorldRows = i_gridWorldRows;
+	FillRewardsMap();
 }
 
 GridWorld::GridWorld(const char* i_gridWorldFile)
@@ -32,6 +32,7 @@ GridWorld::GridWorld(const char* i_gridWorldFile)
 		m_gridWorldRows = potentialGridWorldRows;
 	m_width = m_gridWorldRows[0].GetWidth();
 	m_height = m_gridWorldRows.size();
+	FillRewardsMap();
 }
 
 //Returns the cell in the passed in position
@@ -57,6 +58,20 @@ bool GridWorld::GetRow(int rowPosition, Row &io_row) const
 
 	io_row = m_gridWorldRows[rowPosition];
 	return true;
+}
+
+//Returns if the cell in the passed position is the goal
+bool GridWorld::bIsGoal(Position i_position) const
+{
+	Row row;
+	if (GetRow(i_position.GetYPosition(), row))
+	{
+		Cell cell;
+		if (row.GetCell(i_position.GetXPosition(), cell))
+			return cell.bIsGoal();
+	}
+
+	return false;
 }
 
 //Determines if passed in position is in grid world
@@ -224,6 +239,26 @@ bool GridWorld::AddRow(Row i_row)
 	return true;
 }
 
+int GridWorld::DetermineMoveReward(Position const i_from, Position const i_to)
+{
+
+	if (bIsPositionValid(i_from) && bIsPositionValid(i_to) && bIsMoveValid(i_from, i_to))
+	{
+		Cell cell;
+		if (GetCell(i_to, cell))
+		{
+			if (!cell.bIsOpen())
+				return -1;
+			if (cell.bIsGoal())
+				return 100;
+			else
+				return 0;
+		}
+	}
+
+	return -1;
+}
+
 //Leaves the cell in the passed in position
 bool GridWorld::LeaveCell(Position const i_position)
 {
@@ -232,6 +267,31 @@ bool GridWorld::LeaveCell(Position const i_position)
 
 	return false;
 }
+
+//Fills the rewards map using the completed grid world
+void GridWorld::FillRewardsMap()
+{
+	for (int y = 0; y < m_height; y++)
+	{
+		for (int x = 0; x < m_width; x++)
+		{
+			Position position(x, y);
+			//Determine rewards for moving in all four directions
+			Position newPosition(position.GetXPosition(), position.GetYPosition() - 1);
+			m_rewardMap.SetReward(R(newPosition, MOVE_UP), DetermineMoveReward(position, newPosition));
+
+			newPosition = Position(position.GetXPosition(), position.GetYPosition() + 1);
+			m_rewardMap.SetReward(R(newPosition, MOVE_DOWN), DetermineMoveReward(position, newPosition));
+
+			newPosition = Position(position.GetXPosition() - 1, position.GetYPosition());
+			m_rewardMap.SetReward(R(newPosition, MOVE_LEFT), DetermineMoveReward(position, newPosition));
+
+			newPosition = Position(position.GetXPosition() + 1, position.GetYPosition());
+			m_rewardMap.SetReward(R(newPosition, MOVE_RIGHT), DetermineMoveReward(position, newPosition));
+		}
+	}
+}
+
 //Occupies the cell in the passed in position
 bool GridWorld::OccupyCell(Position const i_position)
 {

@@ -23,6 +23,9 @@ public:
 	bool OccupyCell(int const i_cellPosition);
 	std::string const PrintRow();
 
+	rowIt begin() const{ return m_row.cbegin(); }
+	rowIt end() const{ return m_row.cend(); }
+
 protected:
 private:
 	std::vector<Cell> m_row;
