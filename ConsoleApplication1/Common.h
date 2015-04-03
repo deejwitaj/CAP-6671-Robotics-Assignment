@@ -65,8 +65,8 @@ public:
 	void SetYPosition(int i_y){ y = i_y; }
 
 private:
-	int x = 0;
-	int y = 0;
+	int x;
+	int y;
 };
 
 struct R
@@ -79,14 +79,17 @@ struct R
 
 	bool operator== (const R& i_right) const
 	{
-		if (state == i_right.state)
+		if ((state == i_right.state) && (action != i_right.action))
 			return true;
+
 		return false;
 	}
 
 	bool operator< (const R& i_right) const
 	{
-		if (state < i_right.state)
+		if ((state < i_right.state))
+			return true;
+		if ((state == i_right.state) && (action < i_right.action))
 			return true;
 
 		return false;
