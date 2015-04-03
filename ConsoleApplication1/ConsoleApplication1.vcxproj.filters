@@ -82,7 +82,7 @@
       <Filter>Interface</Filter>
     </ClCompile>
     <ClCompile Include="RewardsMap.cpp">
-      <Filter>Planner</Filter>
+      <Filter>GridWorld</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

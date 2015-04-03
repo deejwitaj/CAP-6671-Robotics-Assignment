@@ -278,16 +278,20 @@ void GridWorld::FillRewardsMap()
 			Position position(x, y);
 			//Determine rewards for moving in all four directions
 			Position newPosition(position.GetXPosition(), position.GetYPosition() - 1);
-			m_rewardMap.SetReward(R(newPosition, MOVE_UP), DetermineMoveReward(position, newPosition));
+			if (bIsPositionValid(newPosition))
+				m_rewardMap.SetReward(R(position, MOVE_UP), DetermineMoveReward(position, newPosition));
 
 			newPosition = Position(position.GetXPosition(), position.GetYPosition() + 1);
-			m_rewardMap.SetReward(R(newPosition, MOVE_DOWN), DetermineMoveReward(position, newPosition));
+			if (bIsPositionValid(newPosition))
+				m_rewardMap.SetReward(R(position, MOVE_DOWN), DetermineMoveReward(position, newPosition));
 
 			newPosition = Position(position.GetXPosition() - 1, position.GetYPosition());
-			m_rewardMap.SetReward(R(newPosition, MOVE_LEFT), DetermineMoveReward(position, newPosition));
+			if (bIsPositionValid(newPosition))
+				m_rewardMap.SetReward(R(position, MOVE_LEFT), DetermineMoveReward(position, newPosition));
 
 			newPosition = Position(position.GetXPosition() + 1, position.GetYPosition());
-			m_rewardMap.SetReward(R(newPosition, MOVE_RIGHT), DetermineMoveReward(position, newPosition));
+			if (bIsPositionValid(newPosition))
+				m_rewardMap.SetReward(R(position, MOVE_RIGHT), DetermineMoveReward(position, newPosition));
 		}
 	}
 }
