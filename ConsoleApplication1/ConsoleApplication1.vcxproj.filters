@@ -87,5 +87,8 @@
     <ClCompile Include="QMap.cpp">
       <Filter>Planner</Filter>
     </ClCompile>
+    <ClCompile Include="PathPlanner.cpp">
+      <Filter>Planner</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

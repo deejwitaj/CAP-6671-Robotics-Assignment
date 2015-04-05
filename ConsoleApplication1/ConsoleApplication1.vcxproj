@@ -98,6 +98,7 @@
     <ClCompile Include="Interface.cpp" />
     <ClCompile Include="GridWorld.cpp" />
     <ClCompile Include="GridWorldReader.cpp" />
+    <ClCompile Include="PathPlanner.cpp" />
     <ClCompile Include="QMap.cpp" />
     <ClCompile Include="RewardsMap.cpp" />
     <ClCompile Include="Row.cpp" />

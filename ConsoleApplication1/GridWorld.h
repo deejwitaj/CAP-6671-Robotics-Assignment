@@ -8,6 +8,7 @@
 #include "Row.h"
 #include "Common.h"
 #include "RewardsMap.h"
+#include "QMap.h"
 
 /*The grid world is a vecotr of rows whose ordering represents a top to bottom placement*/
 class GridWorld
@@ -40,6 +41,8 @@ public:
 	bool MoveLeft();
 	bool MoveRight();
 	bool MoveUp();
+
+	void InitializeQMap(QMap &io_qMap);
 
 	gridWorldIt begin(){ return m_gridWorldRows.cbegin(); }
 	gridWorldIt end(){ return m_gridWorldRows.cend(); }
