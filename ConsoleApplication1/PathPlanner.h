@@ -1,7 +1,7 @@
 #ifndef INC_E1BEE5A3F4C54D32B84B72E3A0AE69B3
 #define INC_E1BEE5A3F4C54D32B84B72E3A0AE69B3
 
-#include <vector>
+#include <list>
 
 #include "Common.h"
 #include "QMap.h"
@@ -13,7 +13,7 @@ public:
 	PathPlanner(QMap i_qMap, bool i_bIsQLearning = false, double i_discountFactor = 0.0, double i_learningRate = 1.0);
 
 
-	Action GetNextMove(Position i_position, double i_reward);
+	Action GetNextMove(Position i_position, double i_reward, std::list<Action> i_validMoves);
 protected:
 private:
 	bool m_bIsQLearning; //If true, we are using the Q learning method to solve maze
@@ -23,9 +23,10 @@ private:
 	double m_learningRate;
 
 	double CalculateNextQ(double i_reward, Position i_currentPosition, Action i_action);
+	Action CompareQs(double i_maxQ, Action i_curentAciton, Action i_potentialAction, Position i_position) const;
 
 	double GetMaxQ(Position i_position) const;
-	Action GetMaxQMove(Position i_position) const;
+	Action GetMaxQMove(Position i_position, std::list<Action> i_validMoves) const;
 	Action GetGreediestMove(Position i_position) const;
 };
 #endif
