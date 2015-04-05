@@ -17,7 +17,7 @@ double QMap::GetQ(R i_r) const
 	if (it != m_qMap.end())
 		return it->second;
 
-	return -1;
+	return 0;
 }
 
 void QMap::SetQ(R i_r, double i_reward)
