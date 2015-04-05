@@ -230,64 +230,6 @@ bool GridWorld::MoveUp()
 	return Move(m_occupant, to);
 }
 
-//Initializes a q map with values corresponding to the grid world
-//A -1 represents a not valid move, a 0 represents a valid move...
-//...and a 100 represents the goal
-void GridWorld::InitializeQMap(QMap &io_qMap)
-{
-	for (int y = 0; y < m_height; y++)
-	{
-		for (int x = 0; x < m_width; x++)
-		{
-			Position position(x, y);
-			//Determine initial q values for moving in all four directions
-			Position newPosition(position.GetXPosition(), position.GetYPosition() - 1);
-			if (bIsPositionValid(newPosition))
-			{
-				if (bIsGoal(newPosition))
-					io_qMap.SetQ(R(position, MOVE_UP), 100);
-				else
-					io_qMap.SetQ(R(position, MOVE_UP), 0);
-			}
-			else
-				io_qMap.SetQ(R(position, MOVE_UP), -1);
-
-			newPosition = Position(position.GetXPosition(), position.GetYPosition() + 1);
-			if (bIsPositionValid(newPosition))
-			{
-				if (bIsGoal(newPosition))
-					io_qMap.SetQ(R(position, MOVE_DOWN), 100);
-				else
-					io_qMap.SetQ(R(position, MOVE_DOWN), 0);
-			}
-			else
-				io_qMap.SetQ(R(position, MOVE_DOWN), -1);
-
-			newPosition = Position(position.GetXPosition() - 1, position.GetYPosition());
-			if (bIsPositionValid(newPosition))
-			{
-				if (bIsGoal(newPosition))
-					io_qMap.SetQ(R(position, MOVE_LEFT), 100);
-				else
-					io_qMap.SetQ(R(position, MOVE_LEFT), 0);
-			}
-			else
-				io_qMap.SetQ(R(position, MOVE_LEFT), -1);
-
-			newPosition = Position(position.GetXPosition() + 1, position.GetYPosition());
-			if (bIsPositionValid(newPosition))
-			{
-				if (bIsGoal(newPosition))
-					io_qMap.SetQ(R(position, MOVE_RIGHT), 100);
-				else
-					io_qMap.SetQ(R(position, MOVE_RIGHT), 0);
-			}
-			else
-				io_qMap.SetQ(R(position, MOVE_RIGHT), -1);
-		}
-	}
-}
-
 bool GridWorld::AddRow(Row i_row)
 {
 	if (i_row.GetWidth() < m_width || i_row.GetWidth() > m_width)

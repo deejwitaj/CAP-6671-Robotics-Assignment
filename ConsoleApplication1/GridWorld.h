@@ -42,8 +42,6 @@ public:
 	bool MoveRight();
 	bool MoveUp();
 
-	void InitializeQMap(QMap &io_qMap);
-
 	gridWorldIt begin(){ return m_gridWorldRows.cbegin(); }
 	gridWorldIt end(){ return m_gridWorldRows.cend(); }
 
