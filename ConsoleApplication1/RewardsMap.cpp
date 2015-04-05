@@ -1,7 +1,6 @@
 #include "stdafx.h"
 
 #include "RewardsMap.h"
-#include "Row.h"
 
 RewardsMap::RewardsMap()
 {
@@ -9,7 +8,7 @@ RewardsMap::RewardsMap()
 
 int RewardsMap::GetReward(Position i_position, Action i_action) const
 {
-	return -1;
+	return GetReward(R(i_position, i_action));
 }
 
 int RewardsMap::GetReward(R i_r) const

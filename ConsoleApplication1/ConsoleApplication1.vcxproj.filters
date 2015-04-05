@@ -84,5 +84,8 @@
     <ClCompile Include="RewardsMap.cpp">
       <Filter>GridWorld</Filter>
     </ClCompile>
+    <ClCompile Include="QMap.cpp">
+      <Filter>Planner</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
