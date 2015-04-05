@@ -90,5 +90,8 @@
     <ClCompile Include="PathPlanner.cpp">
       <Filter>Planner</Filter>
     </ClCompile>
+    <ClCompile Include="Robot.cpp">
+      <Filter>Robot</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

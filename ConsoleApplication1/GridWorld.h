@@ -15,35 +15,29 @@
 class GridWorld
 {
 public:
-	typedef std::vector<Row>::const_iterator gridWorldIt;
-
 	GridWorld(int const i_gridWidth = 8, int const i_gridHeight = 8);
 	GridWorld(std::vector<Row> i_gridWorldRows);
 	GridWorld(const char* i_gridWorldFile);
 
-	bool GetCell(Position i_cellPosition, Cell &io_cell) const;
-	bool GetRow(int rowPosition, Row &io_row) const;
-	int GetHeight() const{ return m_height; }
-	int GetWidth() const{ return m_width; }
-	Position GetStartingCellPosition() const { return m_startingCell; }
-	Position GetGoalCellLocation() const { return m_goalCell; }
-
 	bool bIsGoal(Position const i_position) const;
+	bool bIsPositionOpen(const Position i_position) const;
 	bool bIsPositionValid(const Position i_position) const;
-	bool bIsMoveValid(Position i_from, Position i_to) const;
+	bool bIsMoveValid(Action i_action) const;
+
+	Position GetCurrentPosition() const{ return m_occupant; }
+
+	std::list<Action> GetValidMoves();
+	std::list<Action> GetValidMoves(Position i_position);
 	
 	std::string const PrintGridWorld();
 
 	bool Enter();
-	bool Enter(Position i_position);
 	void Leave(){ m_bOccupied = false; }
-	double MoveDown(std::list<Action> &io_validMoves);
-	double MoveLeft(std::list<Action> &io_validMoves);
-	double MoveRight(std::list<Action> &io_validMoves);
-	double MoveUp(std::list<Action> &io_validMoves);
-
-	gridWorldIt begin(){ return m_gridWorldRows.cbegin(); }
-	gridWorldIt end(){ return m_gridWorldRows.cend(); }
+	double Move(Action i_action);
+	double MoveDown();
+	double MoveLeft();
+	double MoveRight();
+	double MoveUp();
 
 protected:
 private:
@@ -55,11 +49,21 @@ private:
 	bool m_bOccupied;
 	RewardsMap m_rewardMap;
 
+	bool Enter(Position i_position);
+
+	bool bIsMoveValid(Position const i_from, Position const i_to) const;
+	bool bIsMoveValid(Position const i_from, Action const i_action) const;
+
+	bool GetCell(Position i_cellPosition, Cell &io_cell) const;
+	bool GetRow(int rowPosition, Row &io_row) const;
+	int GetHeight() const{ return m_height; }
+	int GetWidth() const{ return m_width; }
+
 	bool AddRow(Row i_row);
 	int DetermineMoveReward(Position const i_from, Position const i_to);
 	void FillRewardsMap();
 	bool LeaveCell(Position const i_position);
-	double Move(Position i_from, Position i_to, Action i_action, std::list<Action> &io_validMoves);
+	double Move(Position i_from, Position i_to, Action i_action);
 	bool OccupyCell(Position const i_position);
 };
 
