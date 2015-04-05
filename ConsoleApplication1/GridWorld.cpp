@@ -183,7 +183,7 @@ bool GridWorld::Enter(Position i_position)
 }
 
 //Move from i_from to i_to
-bool GridWorld::Move(Position i_from, Position i_to)
+double GridWorld::Move(Position i_from, Position i_to, Action i_action, std::list<Action> &io_validMoves)
 {
 	if (m_bOccupied)
 	{
@@ -191,43 +191,43 @@ bool GridWorld::Move(Position i_from, Position i_to)
 		if (bIsMoveValid(i_from, i_to) && LeaveCell(i_from) && OccupyCell(i_to))
 		{
 			PrintGridWorld();
-			return true;
+			return m_rewardMap.GetReward(i_from, i_action);
 		}
 	}
 
-	return false;
+	return -1;
 }
 
 //Move down one cell
-bool GridWorld::MoveDown()
+double GridWorld::MoveDown(std::list<Action> &io_validMoves)
 {
 	Position to = m_occupant;
 	to.SetYPosition(m_occupant.GetYPosition() + 1);
-	return Move(m_occupant, to);
+	return Move(m_occupant, to, MOVE_DOWN, io_validMoves);
 }
 
 //Move left one cell
-bool GridWorld::MoveLeft()
+double GridWorld::MoveLeft(std::list<Action> &io_validMoves)
 {
 	Position to = m_occupant;
 	to.SetXPosition(m_occupant.GetXPosition() - 1);
-	return Move(m_occupant, to);
+	return Move(m_occupant, to, MOVE_LEFT, io_validMoves);
 }
 
 //Move right one cell
-bool GridWorld::MoveRight()
+double GridWorld::MoveRight(std::list<Action> &io_validMoves)
 {
 	Position to = m_occupant;
 	to.SetXPosition(m_occupant.GetXPosition() + 1);
-	return Move(m_occupant, to);
+	return Move(m_occupant, to, MOVE_RIGHT, io_validMoves);
 }
 
 //Move up one cell
-bool GridWorld::MoveUp()
+double GridWorld::MoveUp(std::list<Action> &io_validMoves)
 {
 	Position to = m_occupant;
 	to.SetYPosition(m_occupant.GetYPosition() - 1);
-	return Move(m_occupant, to);
+	return Move(m_occupant, to, MOVE_UP, io_validMoves);
 }
 
 bool GridWorld::AddRow(Row i_row)

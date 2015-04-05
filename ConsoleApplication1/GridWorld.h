@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <list>
 
 #include "Row.h"
 #include "Common.h"
@@ -36,11 +37,10 @@ public:
 	bool Enter();
 	bool Enter(Position i_position);
 	void Leave(){ m_bOccupied = false; }
-	bool Move(Position i_from, Position i_to);
-	bool MoveDown();
-	bool MoveLeft();
-	bool MoveRight();
-	bool MoveUp();
+	double MoveDown(std::list<Action> &io_validMoves);
+	double MoveLeft(std::list<Action> &io_validMoves);
+	double MoveRight(std::list<Action> &io_validMoves);
+	double MoveUp(std::list<Action> &io_validMoves);
 
 	gridWorldIt begin(){ return m_gridWorldRows.cbegin(); }
 	gridWorldIt end(){ return m_gridWorldRows.cend(); }
@@ -59,6 +59,7 @@ private:
 	int DetermineMoveReward(Position const i_from, Position const i_to);
 	void FillRewardsMap();
 	bool LeaveCell(Position const i_position);
+	double Move(Position i_from, Position i_to, Action i_action, std::list<Action> &io_validMoves);
 	bool OccupyCell(Position const i_position);
 };
 
