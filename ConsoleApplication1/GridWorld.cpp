@@ -5,11 +5,12 @@
 #include "time.h"
 
 //Defaults to an 8x8 grid world with no obstacles or walls other than the outside border
-GridWorld::GridWorld(int const i_gridWidth, int const i_gridHeight)
+GridWorld::GridWorld(int const i_gridWidth, int const i_gridHeight, bool i_bIsStochastic)
 {
 	m_width = i_gridWidth;
 	m_height = i_gridHeight;
 	Row row(true, i_gridWidth);
+	m_bIsStochastic = i_bIsStochastic;
 	for (int i = 0; i < i_gridHeight; i++)
 		AddRow(row);
 	FillRewardsMap();
@@ -27,13 +28,14 @@ GridWorld::GridWorld(std::vector<Row> i_gridWorldRows)
 	FillRewardsMap();
 }
 
-GridWorld::GridWorld(const char* i_gridWorldFile)
+GridWorld::GridWorld(const char* i_gridWorldFile, bool i_bIsStochastic)
 {
 	std::vector<Row> potentialGridWorldRows;
 	if (GridWorldReader::CreateGridWorld(i_gridWorldFile, potentialGridWorldRows))
 		m_gridWorldRows = potentialGridWorldRows;
 	m_width = m_gridWorldRows[0].GetWidth();
 	m_height = m_gridWorldRows.size();
+  m_bIsStochastic = i_bIsStochastic;
 	FillRewardsMap();
 }
 
@@ -239,11 +241,16 @@ bool GridWorld::Enter()
 	if (validPositions.empty())
 		return false;
 
-	srand(time(NULL));
 	int randomPosition = rand() % validPositions.size();
 	auto it = validPositions.cbegin();
 	std::advance(it, randomPosition);
 	return Enter(*it);
+}
+
+void GridWorld::Leave()
+{
+	LeaveCell(m_occupant);
+	m_bOccupied = false;
 }
 
 //Enters the robot into the requested position if it is available
@@ -263,25 +270,79 @@ bool GridWorld::Enter(Position i_position)
 }
 
 //Moves the occupant using the passed in action
-double GridWorld::Move(Action i_action)
+double GridWorld::Move(Action i_action, Action &io_actualAction)
 {
+	int chance;
+
+	if (m_bIsStochastic)
+		chance = rand() % 101;
+	else
+		chance = 0;
+
+	if (chance < 60)
+	{
+		switch (i_action)
+		{
+		case MOVE_UP:
+			return MoveUp(io_actualAction);
+		case MOVE_DOWN:
+      return MoveDown(io_actualAction);
+		case MOVE_LEFT:
+      return MoveLeft(io_actualAction);
+		case MOVE_RIGHT:
+      return MoveRight(io_actualAction);
+		}
+	}
+
 	switch (i_action)
 	{
 	case MOVE_UP:
-		return MoveUp();
+	{
+		if (chance < 70)
+      return MoveRight(io_actualAction);
+		else if (chance < 80)
+      return MoveDown(io_actualAction);
+		else if (chance < 90)
+      return MoveLeft(io_actualAction);
+    return NoMove(io_actualAction);
+	}
 	case MOVE_DOWN:
-		return MoveDown();
+	{
+		if (chance < 70)
+      return MoveUp(io_actualAction);
+		else if (chance < 80)
+      return MoveRight(io_actualAction);
+		else if (chance < 90)
+      return MoveLeft(io_actualAction);
+    return NoMove(io_actualAction);
+	}
 	case MOVE_LEFT:
-			return MoveLeft();
+	{
+		if (chance < 70)
+      return MoveUp(io_actualAction);
+		else if (chance < 80)
+      return MoveDown(io_actualAction);
+		else if (chance < 90)
+      return MoveRight(io_actualAction);
+    return NoMove(io_actualAction);
+	}
 	case MOVE_RIGHT:
-		return MoveRight();
+	{
+		if (chance < 70)
+      return MoveUp(io_actualAction);
+		else if (chance < 80)
+      return MoveDown(io_actualAction);
+		else if (chance < 90)
+      return MoveLeft(io_actualAction);
+    return NoMove(io_actualAction);
+	}
 	}
 
 	return -1;
 }
 
 //Move from i_from to i_to
-double GridWorld::Move(Position i_from, Position i_to, Action i_action)
+double GridWorld::Move(Position i_from, Position i_to, Action i_action, Action &io_actualAction)
 {
 	if (m_bOccupied)
 	{
@@ -289,45 +350,53 @@ double GridWorld::Move(Position i_from, Position i_to, Action i_action)
 		if (bIsMoveValid(i_from, i_to) && LeaveCell(i_from) && OccupyCell(i_to))
 		{
 			PrintGridWorld();
-			return m_rewardMap.GetReward(i_from, i_action);
+			int reward = m_rewardMap.GetReward(i_from, i_action);
+      io_actualAction = i_action;
+			return reward;
 		}
 	}
 
-	return -1;
+  io_actualAction = NO_MOVE;
+	return m_rewardMap.GetReward(i_from, NO_MOVE);
 }
 
 //Move down one cell
-double GridWorld::MoveDown()
+double GridWorld::MoveDown(Action &io_actualAction)
 {
 	Position to = m_occupant;
 	to.SetYPosition(m_occupant.GetYPosition() + 1);
-	return Move(m_occupant, to, MOVE_DOWN);
+  return Move(m_occupant, to, MOVE_DOWN, io_actualAction);
 }
 
 //Move left one cell
-double GridWorld::MoveLeft()
+double GridWorld::MoveLeft(Action &io_actualAction)
 {
 	Position to = m_occupant;
 	to.SetXPosition(m_occupant.GetXPosition() - 1);
-	return Move(m_occupant, to, MOVE_LEFT);
+  return Move(m_occupant, to, MOVE_LEFT, io_actualAction);
 }
 
 //Move right one cell
-double GridWorld::MoveRight()
+double GridWorld::MoveRight(Action &io_actualAction)
 {
 	Position to = m_occupant;
 	to.SetXPosition(m_occupant.GetXPosition() + 1);
-	return Move(m_occupant, to, MOVE_RIGHT);
+  return Move(m_occupant, to, MOVE_RIGHT, io_actualAction);
 }
 
 //Move up one cell
-double GridWorld::MoveUp()
+double GridWorld::MoveUp(Action &io_actualAction)
 {
 	Position to = m_occupant;
 	to.SetYPosition(m_occupant.GetYPosition() - 1);
-	return Move(m_occupant, to, MOVE_UP);
+  return Move(m_occupant, to, MOVE_UP, io_actualAction);
 }
 
+double GridWorld::NoMove(Action &io_actualAction)
+{
+  Position to = m_occupant;
+  return Move(m_occupant, m_occupant, NO_MOVE, io_actualAction);
+}
 bool GridWorld::AddRow(Row i_row)
 {
 	if (i_row.GetWidth() < m_width || i_row.GetWidth() > m_width)
@@ -390,6 +459,8 @@ void GridWorld::FillRewardsMap()
 			newPosition = Position(position.GetXPosition() + 1, position.GetYPosition());
 			if (bIsPositionValid(newPosition))
 				m_rewardMap.SetReward(R(position, MOVE_RIGHT), DetermineMoveReward(position, newPosition));
+
+      m_rewardMap.SetReward(R(position, NO_MOVE), DetermineMoveReward(position, position));
 		}
 	}
 }

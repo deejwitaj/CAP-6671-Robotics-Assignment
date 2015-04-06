@@ -15,9 +15,9 @@
 class GridWorld
 {
 public:
-	GridWorld(int const i_gridWidth = 8, int const i_gridHeight = 8);
+	GridWorld(int const i_gridWidth = 8, int const i_gridHeight = 8, bool i_bIsStochastic = true);
 	GridWorld(std::vector<Row> i_gridWorldRows);
-	GridWorld(const char* i_gridWorldFile);
+	GridWorld(const char* i_gridWorldFile, bool i_bIsStochastic);
 
 	bool bIsGoal(Position const i_position) const;
 	bool bIsPositionOpen(const Position i_position) const;
@@ -28,25 +28,26 @@ public:
 
 	std::list<Action> GetValidMoves();
 	std::list<Action> GetValidMoves(Position i_position);
+
+  void SetStochasticity(bool i_bIsStochastic){ m_bIsStochastic = i_bIsStochastic; }
 	
 	std::string const PrintGridWorld();
 
 	bool Enter();
-	void Leave(){ m_bOccupied = false; }
-	double Move(Action i_action);
-	double MoveDown();
-	double MoveLeft();
-	double MoveRight();
-	double MoveUp();
+	void Leave();
+	double Move(Action i_action, Action &io_actualAction);
+  double MoveDown(Action &io_actualAction);
+  double MoveLeft(Action &io_actualAction);
+  double MoveRight(Action &io_actualAction);
+  double MoveUp(Action &io_actualAction);
+  double NoMove(Action &io_actualAction);
 
 protected:
 private:
 	std::vector<Row> m_gridWorldRows;
 	int m_width, m_height;
-	Position m_startingCell;
-	Position m_goalCell;
 	Position m_occupant;
-	bool m_bOccupied;
+	bool m_bOccupied, m_bIsStochastic;
 	RewardsMap m_rewardMap;
 
 	bool Enter(Position i_position);
@@ -63,7 +64,7 @@ private:
 	int DetermineMoveReward(Position const i_from, Position const i_to);
 	void FillRewardsMap();
 	bool LeaveCell(Position const i_position);
-	double Move(Position i_from, Position i_to, Action i_action);
+  double Move(Position i_from, Position i_to, Action i_action, Action &io_actualAction);
 	bool OccupyCell(Position const i_position);
 };
 

@@ -14,6 +14,8 @@ public:
 	double GetQ(R const i_r) const;
 	void SetQ(R i_r, double i_reward);
 
+	void Print();
+
 protected:
 private:
 

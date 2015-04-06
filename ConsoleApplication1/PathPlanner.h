@@ -16,6 +16,8 @@ public:
 	void DidMove(Position i_from, Position i_to, Action i_action, double i_reward, std::list<Action> i_validMoves);
 	Action GetNextMove(Position i_from, std::list<Action> i_validMoves);
 	Action GetGreediestMove(Position i_position, std::list<Action> i_validMoves) const;
+	void PrintQMap();
+  void FinishLearning(){ m_bIsExploring = false; }
 protected:
 private:
 	bool m_bIsQLearning; //If true, we are using the Q learning method to solve maze
@@ -25,7 +27,7 @@ private:
 	double m_learningRate;
 
 	double CalculateNextQ(double i_reward, Position i_from, Position i_to, Action i_action, std::list<Action> i_validMoves);
-	Action GetMaxQAction(double i_maxQ, Action i_curentAciton, Action i_potentialAction, Position i_position) const;
+	Action GetMaxQAction(double &i_maxQ, Action i_curentAciton, Action i_potentialAction, Position i_position) const;
 
 	double GetMaxQ(Position i_position, std::list<Action> i_validMoves) const;
 	Action GetMinQAction(double i_maxQ, Action i_currentAction, Action i_potentialAction, Position i_position) const;
