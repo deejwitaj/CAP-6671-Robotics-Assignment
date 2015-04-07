@@ -39,6 +39,12 @@ GridWorld::GridWorld(const char* i_gridWorldFile, bool i_bIsStochastic)
 	FillRewardsMap();
 }
 
+void GridWorld::Reset()
+{
+  for (int i = 0; i < m_height; i++)
+    m_gridWorldRows[i].Reset();
+}
+
 //Returns the cell in the passed in position
 bool GridWorld::GetCell(Position i_cellPosition, Cell &io_cell) const
 {
@@ -79,6 +85,28 @@ std::list<Action> GridWorld::GetValidMoves(Position i_position)
 		validMoves.push_back(MOVE_RIGHT);
 
 	return validMoves;
+}
+
+
+void GridWorld::ConsiderCell(Position i_pos)
+{
+  if (bIsPositionValid(i_pos))
+    m_gridWorldRows[i_pos.GetYPosition()].ConsiderCell(i_pos.GetXPosition());
+  PrintGridWorld();
+}
+
+void GridWorld::UnConsiderCell(Position i_pos)
+{
+  if (bIsPositionValid(i_pos))
+    m_gridWorldRows[i_pos.GetYPosition()].UnConsiderCell(i_pos.GetXPosition());
+  PrintGridWorld();
+}
+
+void GridWorld::AcceptCell(Position i_pos)
+{
+  if (bIsPositionValid(i_pos))
+    m_gridWorldRows[i_pos.GetYPosition()].AcceptCell(i_pos.GetXPosition());
+  PrintGridWorld();
 }
 
 bool GridWorld::bIsPositionOpen(Position i_position) const
@@ -132,6 +160,25 @@ bool GridWorld::bIsMoveValid(Action i_action) const
 		return bIsMoveValid(m_occupant, i_action);
 
 	return false;
+}
+
+//Returns position of the goal cell
+Position GridWorld::GetGoalPosition() const
+{
+  for (int height = 0; height < m_height; height++)
+  {
+    Row row;
+    GetRow(height, row);
+    for (int width = 0; width < m_width; width++)
+    {
+      Cell cell;
+      row.GetCell(width, cell);
+      if (cell.bIsGoal())
+        return Position(width, height);
+    }
+  }
+
+  return Position(0, 0);
 }
 
 //Returns valid moves from the occupnat's position

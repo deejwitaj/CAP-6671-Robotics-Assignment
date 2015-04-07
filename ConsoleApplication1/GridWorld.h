@@ -19,18 +19,22 @@ public:
 	GridWorld(std::vector<Row> i_gridWorldRows);
 	GridWorld(const char* i_gridWorldFile, bool i_bIsStochastic);
 
+  void Reset();
 	bool bIsGoal(Position const i_position) const;
 	bool bIsPositionOpen(const Position i_position) const;
 	bool bIsPositionValid(const Position i_position) const;
 	bool bIsMoveValid(Action i_action) const;
 
 	Position GetCurrentPosition() const{ return m_occupant; }
-
+  Position GetGoalPosition() const;
 	std::list<Action> GetValidMoves();
 	std::list<Action> GetValidMoves(Position i_position);
 
   void SetStochasticity(bool i_bIsStochastic){ m_bIsStochastic = i_bIsStochastic; }
 	
+  void AcceptCell(Position i_pos);
+  void ConsiderCell(Position i_pos);
+  void UnConsiderCell(Position i_pos);
 	std::string const PrintGridWorld();
 
 	bool Enter();

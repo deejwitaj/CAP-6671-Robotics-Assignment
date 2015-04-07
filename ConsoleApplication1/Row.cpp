@@ -35,6 +35,12 @@ Row::Row(std::vector<Cell> i_row, int const i_Width, int const i_startingColumn)
 	AddRow(i_Width - m_row.size(), i_cell);
 }
 
+void Row::Reset()
+{
+  for (int i = 0; i < m_row.size(); i++)
+    m_row[i].Reset();
+}
+
 //Returns a copy of the requested cell in the passed in position
 bool Row::GetCell(int const i_cellPosition, Cell &io_cell) const
 {
@@ -61,6 +67,24 @@ bool Row::OccupyCell(int const i_cellPosition)
 		return m_row[i_cellPosition].Occupy();
 
 	return false;
+}
+
+void Row::AcceptCell(int const i_cellPosition)
+{
+  if ((i_cellPosition >= 0) && (i_cellPosition < GetWidth()))
+    m_row[i_cellPosition].Accept();
+}
+
+void Row::ConsiderCell(int const i_cellPosition)
+{
+  if ((i_cellPosition >= 0) && (i_cellPosition < GetWidth()))
+    m_row[i_cellPosition].Consider();
+}
+
+void Row::UnConsiderCell(int const i_cellPosition)
+{
+  if ((i_cellPosition >= 0) && (i_cellPosition < GetWidth()))
+    m_row[i_cellPosition].Unconsider();
 }
 
 //Prints out the entir row

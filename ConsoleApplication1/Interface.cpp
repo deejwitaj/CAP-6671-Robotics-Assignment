@@ -10,6 +10,7 @@
 #include "GridWorld.h"
 #include "Robot.h"
 #include "PathPlanner.h"
+#include "AStarPathPlanner.h"
 
 const char* GRID_WORLD_FILE = "MyNewGridWorld.txt";
 
@@ -51,9 +52,37 @@ bool SolveMazeWithQMap()
   return false;
 }
 
+bool AStarMap()
+{
+  using namespace std;
+
+  int choice;
+  printf("Would you like to solve the maze with A* again?\nType '1' for yes and '0' for no.\n");
+  cin >> choice;
+  if (choice == 1)
+    return true;
+  return false;
+}
+
 void StartDeterministicMap()
 {
-	
+  GridWorld *m_gridWorld = new GridWorld(GRID_WORLD_FILE, false);
+  bool bGoAgain = true;
+  while (m_gridWorld->Enter() && bGoAgain)
+  {
+    AStarPathPlanner *m_aStarPlanner = new AStarPathPlanner(m_gridWorld);
+    Node * path = m_aStarPlanner->FindPath();
+    while (path)
+    {
+      m_gridWorld->AcceptCell(path->pos);
+      path = path->from;
+    }
+    system("pause");
+    m_gridWorld->Leave();
+    bGoAgain = AStarMap();
+    m_gridWorld->Reset();
+  }
+  
 }
 
 void StartStochiasticMap(int i_numOfEpisodes, int i_episodeLength)
@@ -101,30 +130,16 @@ void StartAStarMap()
 
 }
 
-bool AskForMapType()
+bool AskForEpisodeData()
 {
-	using namespace std;
-
-	int mapType;
-	printf("What type of map would you like?\n Type '1' for deterministic and '2' for stochastic.\n");
-	cin >> mapType;
-	if (mapType == 1)
-	{
-    StartDeterministicMap();
-		return true;
-	}
-	if (mapType == 2)
-	{
-		int numOfEpisodes, episodeLength;
-		printf("How many episodes?\n");
-		cin >> numOfEpisodes;
-		printf("How long is an episode?\n");
-		cin >> episodeLength;
-    StartStochiasticMap(numOfEpisodes, episodeLength);
-		return true;
-	}
-	printf("Please input a proper map type\n");
-	return false;
+  using namespace std;
+	int numOfEpisodes, episodeLength;
+	printf("How many episodes?\n");
+	cin >> numOfEpisodes;
+	printf("How long is an episode?\n");
+	cin >> episodeLength;
+  StartStochiasticMap(numOfEpisodes, episodeLength);
+	return true;
 }
 
 bool AskForRobotType()
@@ -135,13 +150,12 @@ bool AskForRobotType()
 	cin >> robotType;
 	if (robotType == 1)
 	{
-		StartAStarMap();
+    StartDeterministicMap();
 		return true;
 	}
 	if (robotType == 2)
 	{
-		while (!AskForMapType())
-			continue;
+    AskForEpisodeData();
 		return true;
 	}
 	printf("Please input a valid robot type\n");

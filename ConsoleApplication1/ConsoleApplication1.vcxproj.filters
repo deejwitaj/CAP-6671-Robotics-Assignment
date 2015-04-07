@@ -61,6 +61,9 @@
     <ClInclude Include="RewardsMap.h">
       <Filter>GridWorld</Filter>
     </ClInclude>
+    <ClInclude Include="AStarPathPlanner.h">
+      <Filter>Planner</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -92,6 +95,9 @@
     </ClCompile>
     <ClCompile Include="Robot.cpp">
       <Filter>Robot</Filter>
+    </ClCompile>
+    <ClCompile Include="AStarPathPlanner.cpp">
+      <Filter>Planner</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
