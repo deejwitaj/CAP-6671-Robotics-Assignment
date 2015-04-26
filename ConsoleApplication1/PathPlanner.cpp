@@ -139,7 +139,7 @@ Action PathPlanner::GetMinQAction(double i_maxQ, Action i_currentAction, Action 
 //Returns the move with the lowest current Q value, in accordance with the greedy learning algorithm
 Action PathPlanner::GetGreediestMove(Position i_position, std::list<Action> i_validMoves) const
 {
-	double minQ = 0;
+	double maxQ = 0;
   if (i_validMoves.empty())
     return NO_MOVE;
 
@@ -150,7 +150,7 @@ Action PathPlanner::GetGreediestMove(Position i_position, std::list<Action> i_va
   auto it = i_validMoves.begin();
   it++;
   for (; it != i_validMoves.end(); it++)
-		action = GetMinQAction(minQ, action, *it, i_position);
+    action = GetMaxQAction(maxQ, action, *it, i_position);
 
 	return action;
 }
