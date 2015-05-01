@@ -13,7 +13,7 @@ public:
 	PathPlanner(bool i_bIsQLearning = false, double i_discountFactor = 0.0, double i_learningRate = 1.0);
 
 
-	void DidMove(Position i_from, Position i_to, Action i_action, double i_reward, std::list<Action> i_validMoves);
+	void DidMove(Position i_from, Position i_to, Action i_action, double i_reward, double i_oppositeReward, std::list<Action> i_validMoves);
 	Action GetNextMove(Position i_from, std::list<Action> i_validMoves);
 	Action GetGreediestMove(Position i_position, std::list<Action> i_validMoves) const;
 	void PrintQMap();
@@ -27,6 +27,7 @@ private:
 	double m_learningRate;
 
 	double CalculateNextQ(double i_reward, Position i_from, Position i_to, Action i_action, std::list<Action> i_validMoves);
+  double CalculateOppositeQ(double i_reward, Position i_from, Position i_to, Action i_action, std::list<Action> i_validMoves);
 	Action GetMaxQAction(double &i_maxQ, Action i_curentAciton, Action i_potentialAction, Position i_position) const;
 
 	double GetMaxQ(Position i_position, std::list<Action> i_validMoves) const;

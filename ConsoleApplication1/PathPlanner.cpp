@@ -20,14 +20,71 @@ double PathPlanner::CalculateNextQ(double i_reward, Position i_from, Position i_
 	return OldQ + (m_learningRate * (i_reward + (m_discountFactor * MaxQ) - OldQ));
 }
 
-void PathPlanner::DidMove(Position i_from, Position i_to, Action i_action, double i_reward, std::list<Action> i_validMoves)
+double PathPlanner::CalculateOppositeQ(double i_reward, Position i_from, Position i_to, Action i_action, std::list<Action> i_validMoves)
+{
+  auto it = i_validMoves.begin();
+
+  i_to = i_from;
+
+  switch (i_action)
+  {
+  case MOVE_UP:
+    it = std::find(i_validMoves.begin(), i_validMoves.end(), MOVE_DOWN);
+    i_to.MoveDown();
+    break;
+  case MOVE_DOWN:
+    it = std::find(i_validMoves.begin(), i_validMoves.end(), MOVE_UP);
+    i_to.MoveUp();
+    break;
+  case MOVE_LEFT:
+    it = std::find(i_validMoves.begin(), i_validMoves.end(), MOVE_RIGHT);
+    i_to.MoveRight();
+    break;
+  case MOVE_RIGHT:
+    it = std::find(i_validMoves.begin(), i_validMoves.end(), MOVE_LEFT);
+    i_to.MoveLeft();
+    break;
+  }
+
+  if (it != i_validMoves.end())
+  {
+    double OldQ = m_qMap.GetQ(i_from, *it);
+    double MaxQ = GetMaxQ(i_to, i_validMoves);
+    return OldQ + (m_learningRate * (i_reward + ((1 - m_discountFactor) * MaxQ) - OldQ));
+  }
+
+  return -1;
+}
+
+void PathPlanner::DidMove(Position i_from, Position i_to, Action i_action, double i_reward, double i_oppositeReward, std::list<Action> i_validMoves)
 {
 	if (m_bIsExploring)
 	{
 		double nextQ = CalculateNextQ(i_reward, i_from, i_to, i_action, i_validMoves);
-    if (nextQ < 0)
-      int x = 1;
 		m_qMap.SetQ(R(i_from, i_action), nextQ);
+
+    double oppositeQ = CalculateOppositeQ(i_oppositeReward, i_from, i_to, i_action, i_validMoves);
+    if (oppositeQ >= 0)
+    {
+      Action oppositeAction;
+      switch (i_action)
+      {
+      case MOVE_UP:
+        oppositeAction = MOVE_DOWN;
+        break;
+      case MOVE_DOWN:
+        oppositeAction = MOVE_UP;
+        break;
+      case MOVE_LEFT:
+        oppositeAction = MOVE_RIGHT;
+        break;
+      case MOVE_RIGHT:
+        oppositeAction = MOVE_LEFT;
+        break;
+      }
+      m_qMap.SetQ(R(i_from, oppositeAction), oppositeQ);
+    }
+
 	}
 }
 

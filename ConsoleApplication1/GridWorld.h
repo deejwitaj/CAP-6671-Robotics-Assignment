@@ -46,6 +46,8 @@ public:
   double MoveUp(Action &io_actualAction);
   double NoMove(Action &io_actualAction);
 
+  double GetReward(Action i_action){ return m_rewardMap.GetReward(m_occupant, i_action); }
+
 protected:
 private:
 	std::vector<Row> m_gridWorldRows;

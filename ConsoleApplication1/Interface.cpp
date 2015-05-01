@@ -26,12 +26,30 @@ void ContinueLearning(GridWorld *i_gridWorld, Robot *i_robot, int i_episodeLengt
 		currentPosition = i_gridWorld->GetCurrentPosition();
 		toAction = i_robot->GetNextMove(currentPosition, validToMoves);
 
-    Action actualToAction;
+    Action actualToAction, oppositeAction;
+
+    switch (toAction)
+    {
+    case MOVE_UP:
+      oppositeAction = MOVE_DOWN;
+      break;
+    case MOVE_DOWN:
+      oppositeAction = MOVE_UP;
+      break;
+    case MOVE_LEFT:
+      oppositeAction = MOVE_RIGHT;
+      break;
+    case MOVE_RIGHT:
+      oppositeAction = MOVE_LEFT;
+      break;
+    }
+
     double reward = i_gridWorld->Move(toAction, actualToAction);
+    double oppositeReward = i_gridWorld->GetReward(oppositeAction);
     futurePosition = i_gridWorld->GetCurrentPosition();
     validFutureMoves = i_gridWorld->GetValidMoves();
 
-		i_robot->ProcessMove(currentPosition, futurePosition, reward, validFutureMoves, actualToAction);
+		i_robot->ProcessMove(currentPosition, futurePosition, reward, oppositeReward, validFutureMoves, actualToAction);
 
 		if (i_gridWorld->bIsGoal(i_gridWorld->GetCurrentPosition()))
 			i_episodeLength = 0;
@@ -88,7 +106,7 @@ void StartDeterministicMap()
 void StartStochiasticMap(int i_numOfEpisodes, int i_episodeLength)
 {
 	GridWorld *m_gridWorld = new GridWorld(GRID_WORLD_FILE, true);
-	Robot *m_robot = new Robot(PathPlanner(true, 1, 0.1));
+	Robot *m_robot = new Robot(PathPlanner(true, .7, 0.6));
 
 	if (m_gridWorld->Enter())
 	{
