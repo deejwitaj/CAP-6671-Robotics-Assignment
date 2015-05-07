@@ -16,15 +16,20 @@ public:
 	Row(Cell const i_cell, int const i_width = 1, int const i_startingColumn = 0);
 	Row(std::vector<Cell> i_row, int const i_Width, int const i_startingColumn = 0);
 
+  void Reset();
+
 	int GetWidth() const{ return m_row.size(); }
 	bool GetCell(int const i_cellPosition, Cell &io_cell) const;
 
 	bool LeaveCell(int const i_cellPosition);
 	bool OccupyCell(int const i_cellPosition);
+  void AcceptCell(int const i_cellPosition);
+  void ConsiderCell(int const i_cellPosition);
+  void UnConsiderCell(int const i_cellPosition);
 	std::string const PrintRow();
 
-	rowIt begin() const{ return m_row.cbegin(); }
-	rowIt end() const{ return m_row.cend(); }
+	rowIt begin() const{ return m_row.begin(); }
+	rowIt end() const{ return m_row.end(); }
 
 protected:
 private:

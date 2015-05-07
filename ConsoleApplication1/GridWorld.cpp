@@ -2,12 +2,15 @@
 #include "GridWorld.h"
 #include "GridWorldReader.h"
 
+#include "time.h"
+
 //Defaults to an 8x8 grid world with no obstacles or walls other than the outside border
-GridWorld::GridWorld(int const i_gridWidth, int const i_gridHeight)
+GridWorld::GridWorld(int const i_gridWidth, int const i_gridHeight, bool i_bIsStochastic)
 {
 	m_width = i_gridWidth;
 	m_height = i_gridHeight;
 	Row row(true, i_gridWidth);
+	m_bIsStochastic = i_bIsStochastic;
 	for (int i = 0; i < i_gridHeight; i++)
 		AddRow(row);
 	FillRewardsMap();
@@ -25,14 +28,21 @@ GridWorld::GridWorld(std::vector<Row> i_gridWorldRows)
 	FillRewardsMap();
 }
 
-GridWorld::GridWorld(const char* i_gridWorldFile)
+GridWorld::GridWorld(const char* i_gridWorldFile, bool i_bIsStochastic)
 {
 	std::vector<Row> potentialGridWorldRows;
 	if (GridWorldReader::CreateGridWorld(i_gridWorldFile, potentialGridWorldRows))
 		m_gridWorldRows = potentialGridWorldRows;
 	m_width = m_gridWorldRows[0].GetWidth();
 	m_height = m_gridWorldRows.size();
+  m_bIsStochastic = i_bIsStochastic;
 	FillRewardsMap();
+}
+
+void GridWorld::Reset()
+{
+  for (int i = 0; i < m_height; i++)
+    m_gridWorldRows[i].Reset();
 }
 
 //Returns the cell in the passed in position
@@ -58,6 +68,60 @@ bool GridWorld::GetRow(int rowPosition, Row &io_row) const
 
 	io_row = m_gridWorldRows[rowPosition];
 	return true;
+}
+
+//Returns all valid actions in a given position
+std::list<Action> GridWorld::GetValidMoves(Position i_position)
+{
+	std::list<Action> validMoves;
+
+  validMoves.push_back(NO_MOVE);
+
+	if (bIsMoveValid(i_position, MOVE_UP))
+		validMoves.push_back(MOVE_UP);
+	if (bIsMoveValid(i_position, MOVE_DOWN))
+		validMoves.push_back(MOVE_DOWN);
+	if (bIsMoveValid(i_position, MOVE_LEFT))
+		validMoves.push_back(MOVE_LEFT);
+	if (bIsMoveValid(i_position, MOVE_RIGHT))
+		validMoves.push_back(MOVE_RIGHT);
+
+	return validMoves;
+}
+
+
+void GridWorld::ConsiderCell(Position i_pos)
+{
+  if (bIsPositionValid(i_pos))
+    m_gridWorldRows[i_pos.GetYPosition()].ConsiderCell(i_pos.GetXPosition());
+  //PrintGridWorld();
+}
+
+void GridWorld::UnConsiderCell(Position i_pos)
+{
+  if (bIsPositionValid(i_pos))
+    m_gridWorldRows[i_pos.GetYPosition()].UnConsiderCell(i_pos.GetXPosition());
+  //PrintGridWorld();
+}
+
+void GridWorld::AcceptCell(Position i_pos)
+{
+  if (bIsPositionValid(i_pos))
+    m_gridWorldRows[i_pos.GetYPosition()].AcceptCell(i_pos.GetXPosition());
+  //PrintGridWorld();
+}
+
+bool GridWorld::bIsPositionOpen(Position i_position) const
+{
+	Row row;
+	if (GetRow(i_position.GetYPosition(), row))
+	{
+		Cell cell;
+		if (row.GetCell(i_position.GetXPosition(), cell))
+			return cell.bIsOpen();
+	}
+
+	return false;
 }
 
 //Returns if the cell in the passed position is the goal
@@ -91,6 +155,45 @@ bool GridWorld::bIsPositionValid(const Position i_position) const
 	return true;
 }
 
+//Determines if a move from the current occupant position is valid
+bool GridWorld::bIsMoveValid(Action i_action) const
+{
+	if (m_bOccupied)
+		return bIsMoveValid(m_occupant, i_action);
+
+	return false;
+}
+
+//Returns position of the goal cell
+Position GridWorld::GetGoalPosition() const
+{
+  for (int height = 0; height < m_height; height++)
+  {
+    Row row;
+    GetRow(height, row);
+    for (int width = 0; width < m_width; width++)
+    {
+      Cell cell;
+      row.GetCell(width, cell);
+      if (cell.bIsGoal())
+        return Position(width, height);
+    }
+  }
+
+  return Position(0, 0);
+}
+
+//Returns valid moves from the occupnat's position
+std::list<Action> GridWorld::GetValidMoves()
+{
+	std::list<Action> validMoves;
+
+	if (!m_bOccupied)
+		return validMoves;
+
+	return GetValidMoves(m_occupant);
+}
+
 //Determines if a move between the two positions is possible
 bool GridWorld::bIsMoveValid(Position const i_from, Position const i_to) const
 {
@@ -120,6 +223,30 @@ bool GridWorld::bIsMoveValid(Position const i_from, Position const i_to) const
 	return false;
 }
 
+//Determines if an action in a position is valid
+bool GridWorld::bIsMoveValid(Position const i_from, Action const i_action) const
+{
+	Position i_to;
+
+	switch (i_action)
+	{
+	case MOVE_UP:
+		i_to = Position(i_from.GetXPosition(), i_from.GetYPosition() - 1);
+		return bIsMoveValid(i_from, i_to);
+	case MOVE_DOWN:
+		i_to = Position(i_from.GetXPosition(), i_from.GetYPosition() + 1);
+		return bIsMoveValid(i_from, i_to);
+	case MOVE_LEFT:
+		i_to = Position(i_from.GetXPosition() - 1, i_from.GetYPosition());
+		return bIsMoveValid(i_from, i_to);
+	case MOVE_RIGHT:
+		i_to = Position(i_from.GetXPosition() + 1, i_from.GetYPosition());
+		return bIsMoveValid(i_from, i_to);
+	}
+
+	return false;
+}
+
 //Prints out the grid world. The grid world assumes the file it was created from was formatted correctly.
 //If a conflict between one cell stating it can enter another and the entering cell saying it cannot be entered
 //exists, it will not be reflected in the outputted string
@@ -139,7 +266,7 @@ std::string const GridWorld::PrintGridWorld()
 	return gridWorldString;
 }
 
-//Enters the robot in the first available grid. The order of checked cells goes from left to right, top to bottom
+//Enters the robot in a random position on the grid
 bool GridWorld::Enter()
 {
 	if (m_bOccupied)
@@ -147,23 +274,32 @@ bool GridWorld::Enter()
 
 	Position position;
 	bool bCelIsAvailable = false;
+	std::list<Position> validPositions;
 	for (int checkedRow = 0; checkedRow < m_height; checkedRow++)
 	{
 		for (int checkedCell = 0; checkedCell < m_width; checkedCell++)
 		{
-			if (bIsPositionValid(position) && OccupyCell(position))
-			{
-				m_bOccupied = true;
-				PrintGridWorld();
-				return true;
-			}
+			if (bIsPositionValid(position) && bIsPositionOpen(position))
+				validPositions.push_back(position);
 			position.SetXPosition(checkedCell);
 		}
 		position.SetXPosition(0);
 		position.SetYPosition(checkedRow);
 	}
 
-	return false;
+	if (validPositions.empty())
+		return false;
+
+	int randomPosition = rand() % validPositions.size();
+	auto it = validPositions.cbegin();
+	std::advance(it, randomPosition);
+	return Enter(*it);
+}
+
+void GridWorld::Leave()
+{
+	LeaveCell(m_occupant);
+	m_bOccupied = false;
 }
 
 //Enters the robot into the requested position if it is available
@@ -175,61 +311,141 @@ bool GridWorld::Enter(Position i_position)
 	if (bIsPositionValid(i_position) && OccupyCell(i_position))
 	{
 		m_bOccupied = true;
-		PrintGridWorld();
+		//PrintGridWorld();
 		return true;
 	}
 
 	return false;
 }
 
+//Moves the occupant using the passed in action
+double GridWorld::Move(Action i_action, Action &io_actualAction)
+{
+	int chance;
+
+	if (m_bIsStochastic)
+		chance = rand() % 101;
+	else
+		chance = 0;
+
+	if (chance < 60)
+	{
+		switch (i_action)
+		{
+		case MOVE_UP:
+			return MoveUp(io_actualAction);
+		case MOVE_DOWN:
+      return MoveDown(io_actualAction);
+		case MOVE_LEFT:
+      return MoveLeft(io_actualAction);
+		case MOVE_RIGHT:
+      return MoveRight(io_actualAction);
+		}
+	}
+
+	switch (i_action)
+	{
+	case MOVE_UP:
+	{
+		if (chance < 70)
+      return MoveRight(io_actualAction);
+		else if (chance < 80)
+      return MoveDown(io_actualAction);
+		else if (chance < 90)
+      return MoveLeft(io_actualAction);
+    return NoMove(io_actualAction);
+	}
+	case MOVE_DOWN:
+	{
+		if (chance < 70)
+      return MoveUp(io_actualAction);
+		else if (chance < 80)
+      return MoveRight(io_actualAction);
+		else if (chance < 90)
+      return MoveLeft(io_actualAction);
+    return NoMove(io_actualAction);
+	}
+	case MOVE_LEFT:
+	{
+		if (chance < 70)
+      return MoveUp(io_actualAction);
+		else if (chance < 80)
+      return MoveDown(io_actualAction);
+		else if (chance < 90)
+      return MoveRight(io_actualAction);
+    return NoMove(io_actualAction);
+	}
+	case MOVE_RIGHT:
+	{
+		if (chance < 70)
+      return MoveUp(io_actualAction);
+		else if (chance < 80)
+      return MoveDown(io_actualAction);
+		else if (chance < 90)
+      return MoveLeft(io_actualAction);
+    return NoMove(io_actualAction);
+	}
+	}
+
+	return -1;
+}
+
 //Move from i_from to i_to
-bool GridWorld::Move(Position i_from, Position i_to)
+double GridWorld::Move(Position i_from, Position i_to, Action i_action, Action &io_actualAction)
 {
 	if (m_bOccupied)
 	{
 		//If move is valid, we update the occupant position and return that the move was successful
 		if (bIsMoveValid(i_from, i_to) && LeaveCell(i_from) && OccupyCell(i_to))
 		{
-			PrintGridWorld();
-			return true;
+			//PrintGridWorld();
+			int reward = m_rewardMap.GetReward(i_from, i_action);
+      io_actualAction = i_action;
+			return reward;
 		}
 	}
 
-	return false;
+  io_actualAction = NO_MOVE;
+	return m_rewardMap.GetReward(i_from, NO_MOVE);
 }
 
 //Move down one cell
-bool GridWorld::MoveDown()
+double GridWorld::MoveDown(Action &io_actualAction)
 {
 	Position to = m_occupant;
 	to.SetYPosition(m_occupant.GetYPosition() + 1);
-	return Move(m_occupant, to);
+  return Move(m_occupant, to, MOVE_DOWN, io_actualAction);
 }
 
 //Move left one cell
-bool GridWorld::MoveLeft()
+double GridWorld::MoveLeft(Action &io_actualAction)
 {
 	Position to = m_occupant;
 	to.SetXPosition(m_occupant.GetXPosition() - 1);
-	return Move(m_occupant, to);
+  return Move(m_occupant, to, MOVE_LEFT, io_actualAction);
 }
 
 //Move right one cell
-bool GridWorld::MoveRight()
+double GridWorld::MoveRight(Action &io_actualAction)
 {
 	Position to = m_occupant;
 	to.SetXPosition(m_occupant.GetXPosition() + 1);
-	return Move(m_occupant, to);
+  return Move(m_occupant, to, MOVE_RIGHT, io_actualAction);
 }
 
 //Move up one cell
-bool GridWorld::MoveUp()
+double GridWorld::MoveUp(Action &io_actualAction)
 {
 	Position to = m_occupant;
 	to.SetYPosition(m_occupant.GetYPosition() - 1);
-	return Move(m_occupant, to);
+  return Move(m_occupant, to, MOVE_UP, io_actualAction);
 }
 
+double GridWorld::NoMove(Action &io_actualAction)
+{
+  Position to = m_occupant;
+  return Move(m_occupant, m_occupant, NO_MOVE, io_actualAction);
+}
 bool GridWorld::AddRow(Row i_row)
 {
 	if (i_row.GetWidth() < m_width || i_row.GetWidth() > m_width)
@@ -292,6 +508,8 @@ void GridWorld::FillRewardsMap()
 			newPosition = Position(position.GetXPosition() + 1, position.GetYPosition());
 			if (bIsPositionValid(newPosition))
 				m_rewardMap.SetReward(R(position, MOVE_RIGHT), DetermineMoveReward(position, newPosition));
+
+      m_rewardMap.SetReward(R(position, NO_MOVE), DetermineMoveReward(position, position));
 		}
 	}
 }

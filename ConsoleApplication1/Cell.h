@@ -16,6 +16,7 @@ public:
 	void Decline(){ m_bIsAccepted = false; }
 	bool Leave();
 	bool Occupy();
+  void Reset() { m_bIsAccepted = false; m_bIsBeingConsidered = false; }
 	void Unconsider(){ m_bIsBeingConsidered = false; }
 
 	bool bIsOpen() const { return m_bIsOpen; }

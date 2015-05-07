@@ -80,6 +80,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AStarPathPlanner.h" />
     <ClInclude Include="Cell.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="GridWorld.h" />
@@ -94,11 +95,15 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AStarPathPlanner.cpp" />
     <ClCompile Include="Cell.cpp" />
     <ClCompile Include="Interface.cpp" />
     <ClCompile Include="GridWorld.cpp" />
     <ClCompile Include="GridWorldReader.cpp" />
+    <ClCompile Include="PathPlanner.cpp" />
+    <ClCompile Include="QMap.cpp" />
     <ClCompile Include="RewardsMap.cpp" />
+    <ClCompile Include="Robot.cpp" />
     <ClCompile Include="Row.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
