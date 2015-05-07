@@ -17,6 +17,7 @@ public:
 	Action GetNextMove(Position i_from, std::list<Action> i_validMoves);
 	Action GetGreediestMove(Position i_position, std::list<Action> i_validMoves) const;
 	void PrintQMap();
+  void PrintTimesCellVisited();
   void FinishLearning(){ m_bIsExploring = false; }
 protected:
 private:
@@ -25,11 +26,13 @@ private:
 	QMap m_qMap;
 	double m_discountFactor;
 	double m_learningRate;
+  std::map<Position, int> m_timesCellVisited;
 
 	double CalculateNextQ(double i_reward, Position i_from, Position i_to, Action i_action, std::list<Action> i_validMoves);
   double CalculateOppositeQ(double i_reward, Position i_from, Position i_to, Action i_action, std::list<Action> i_validMoves);
-	Action GetMaxQAction(double &i_maxQ, Action i_curentAciton, Action i_potentialAction, Position i_position) const;
+  void UpdateCellVisited(Position const i_visitedCell);
 
+  Action GetMaxQAction(double &i_maxQ, Action i_curentAciton, Action i_potentialAction, Position i_position) const;
 	double GetMaxQ(Position i_position, std::list<Action> i_validMoves) const;
 	Action GetMinQAction(double i_maxQ, Action i_currentAction, Action i_potentialAction, Position i_position) const;
 	Action GetMaxQMove(Position i_position, std::list<Action> i_validMoves) const;

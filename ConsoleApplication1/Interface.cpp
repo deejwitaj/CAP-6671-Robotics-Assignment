@@ -42,6 +42,12 @@ void ContinueLearning(GridWorld *i_gridWorld, Robot *i_robot, int i_episodeLengt
     case MOVE_RIGHT:
       oppositeAction = MOVE_LEFT;
       break;
+    case NO_MOVE:
+      oppositeAction = NO_MOVE;
+      break;
+    default:
+      printf("Uh oh");
+      break;
     }
 
     double reward = i_gridWorld->Move(toAction, actualToAction);
@@ -116,6 +122,8 @@ void StartStochiasticMap(int i_numOfEpisodes, int i_episodeLength)
 			m_gridWorld->Leave();
 			m_gridWorld->Enter();
 		}
+
+    m_robot->PrintTimesCellVisited();
 		m_robot->PrintQMap();
 	}
 

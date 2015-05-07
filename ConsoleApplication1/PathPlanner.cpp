@@ -1,6 +1,8 @@
 #include "stdafx.h"
 
 #include <list>
+#include <iostream>
+#include <fstream>
 
 #include "PathPlanner.h"
 #include "time.h"
@@ -28,6 +30,8 @@ double PathPlanner::CalculateOppositeQ(double i_reward, Position i_from, Positio
 
   switch (i_action)
   {
+  case NO_MOVE:
+    return -1;
   case MOVE_UP:
     it = std::find(i_validMoves.begin(), i_validMoves.end(), MOVE_DOWN);
     i_to.MoveDown();
@@ -56,12 +60,24 @@ double PathPlanner::CalculateOppositeQ(double i_reward, Position i_from, Positio
   return -1;
 }
 
+//Updates the amount of times a cell was visited
+void PathPlanner::UpdateCellVisited(Position const i_visitedCell)
+{
+  auto it = m_timesCellVisited.find(i_visitedCell);
+  if (it == m_timesCellVisited.end())
+    m_timesCellVisited[i_visitedCell] = 1;
+  else
+    ++m_timesCellVisited[i_visitedCell];
+
+}
+
 void PathPlanner::DidMove(Position i_from, Position i_to, Action i_action, double i_reward, double i_oppositeReward, std::list<Action> i_validMoves)
 {
 	if (m_bIsExploring)
 	{
 		double nextQ = CalculateNextQ(i_reward, i_from, i_to, i_action, i_validMoves);
 		m_qMap.SetQ(R(i_from, i_action), nextQ);
+    UpdateCellVisited(i_from);
 
     double oppositeQ = CalculateOppositeQ(i_oppositeReward, i_from, i_to, i_action, i_validMoves);
     if (oppositeQ >= 0)
@@ -81,8 +97,12 @@ void PathPlanner::DidMove(Position i_from, Position i_to, Action i_action, doubl
       case MOVE_RIGHT:
         oppositeAction = MOVE_LEFT;
         break;
+      default:
+        oppositeAction = NO_MOVE;
+        break;
       }
-      m_qMap.SetQ(R(i_from, oppositeAction), oppositeQ);
+      //m_qMap.SetQ(R(i_from, oppositeAction), oppositeQ);
+      //UpdateCellVisited(i_from);
     }
 
 	}
@@ -216,4 +236,25 @@ Action PathPlanner::GetGreediestMove(Position i_position, std::list<Action> i_va
 void PathPlanner::PrintQMap()
 {
 	m_qMap.Print();
+}
+
+void PathPlanner::PrintTimesCellVisited()
+{
+  using namespace std;
+  double average = 0;
+
+  for (auto it : m_timesCellVisited)
+    average += it.second;
+
+  average = average / m_timesCellVisited.size();
+
+  ofstream myfile("CellsVisited.txt");
+  if (myfile.is_open())
+  {
+    myfile << "There were " << m_timesCellVisited.size() << " cells visited\n";
+    myfile << "Average: " << average << "\n";
+
+    for (auto it : m_timesCellVisited)
+      myfile << "Cell: " << it.first.GetXPosition() << ',' << it.first.GetYPosition() << " " << it.second << " times\n";
+  }
 }

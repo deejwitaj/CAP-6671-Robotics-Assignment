@@ -75,6 +75,8 @@ std::list<Action> GridWorld::GetValidMoves(Position i_position)
 {
 	std::list<Action> validMoves;
 
+  validMoves.push_back(NO_MOVE);
+
 	if (bIsMoveValid(i_position, MOVE_UP))
 		validMoves.push_back(MOVE_UP);
 	if (bIsMoveValid(i_position, MOVE_DOWN))
@@ -92,21 +94,21 @@ void GridWorld::ConsiderCell(Position i_pos)
 {
   if (bIsPositionValid(i_pos))
     m_gridWorldRows[i_pos.GetYPosition()].ConsiderCell(i_pos.GetXPosition());
-  PrintGridWorld();
+  //PrintGridWorld();
 }
 
 void GridWorld::UnConsiderCell(Position i_pos)
 {
   if (bIsPositionValid(i_pos))
     m_gridWorldRows[i_pos.GetYPosition()].UnConsiderCell(i_pos.GetXPosition());
-  PrintGridWorld();
+  //PrintGridWorld();
 }
 
 void GridWorld::AcceptCell(Position i_pos)
 {
   if (bIsPositionValid(i_pos))
     m_gridWorldRows[i_pos.GetYPosition()].AcceptCell(i_pos.GetXPosition());
-  PrintGridWorld();
+  //PrintGridWorld();
 }
 
 bool GridWorld::bIsPositionOpen(Position i_position) const
@@ -309,7 +311,7 @@ bool GridWorld::Enter(Position i_position)
 	if (bIsPositionValid(i_position) && OccupyCell(i_position))
 	{
 		m_bOccupied = true;
-		PrintGridWorld();
+		//PrintGridWorld();
 		return true;
 	}
 
@@ -396,7 +398,7 @@ double GridWorld::Move(Position i_from, Position i_to, Action i_action, Action &
 		//If move is valid, we update the occupant position and return that the move was successful
 		if (bIsMoveValid(i_from, i_to) && LeaveCell(i_from) && OccupyCell(i_to))
 		{
-			PrintGridWorld();
+			//PrintGridWorld();
 			int reward = m_rewardMap.GetReward(i_from, i_action);
       io_actualAction = i_action;
 			return reward;

@@ -26,3 +26,8 @@ void Robot::PrintQMap()
 {
 	m_pathPlanner.PrintQMap();
 }
+
+void Robot::PrintTimesCellVisited()
+{
+  m_pathPlanner.PrintTimesCellVisited();
+}

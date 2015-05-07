@@ -33,31 +33,36 @@ void QMap::SetQ(R i_r, double i_reward)
 
 void QMap::Print()
 {
+  using namespace std;
 
-	for (auto it : m_qMap)
-	{
-		double x = it.first.state.GetXPosition();
-		double y = it.first.state.GetYPosition();
-		std::string action;
-		switch (it.first.action)
-		{
-		case MOVE_UP:
-			action = "MOVE UP";
-			break;
-		case MOVE_DOWN:
-			action = "MOVE DOWN";
-			break;
-		case MOVE_LEFT:
-			action = "MOVE LEFT";
-			break;
-		case MOVE_RIGHT:
-			action = "MOVE RIGHT";
-			break;
-    case NO_MOVE:
-      action = "NO_MOVE";
-      break;
-		}
+  ofstream myfile("QMap.txt");
+  if (myfile.is_open())
+  {
+	  for (auto it : m_qMap)
+	  {
+		  double x = it.first.state.GetXPosition();
+		  double y = it.first.state.GetYPosition();
+		  std::string action;
+		  switch (it.first.action)
+		  {
+		  case MOVE_UP:
+			  action = "MOVE UP";
+			  break;
+		  case MOVE_DOWN:
+			  action = "MOVE DOWN";
+			  break;
+		  case MOVE_LEFT:
+			  action = "MOVE LEFT";
+			  break;
+		  case MOVE_RIGHT:
+			  action = "MOVE RIGHT";
+			  break;
+      case NO_MOVE:
+        action = "NO_MOVE";
+        break;
+		  }
 
-		printf("State: (%f, %f)\nAction: %s\nValue: %f\n", x, y, action.c_str(), it.second);
-	}
+      myfile << "State: " << x << ", " << y << "Action: " << action.c_str() << ": " << it.second << "\n";
+	  }
+  }
 }
